@@ -7,8 +7,21 @@ void setup() {
   BoardInit();
 }
 
+void debugWheels();
+
+//Circ. 23,9389cm
 //Séquence principale.
 void loop() {
-  Serial.write(ENCODER_Read(0));
-  delay(2000);
+
+    MOTOR_SetSpeed(LEFT, 1);
+    MOTOR_SetSpeed(RIGHT, 0.25);
+
+  debugWheels();
+}
+
+void debugWheels() {
+  Serial.println(ENCODER_Read(0));
+  Serial.println(ENCODER_Read(1));
+  Serial.println("--------------------");
+  delay(1000);
 }
