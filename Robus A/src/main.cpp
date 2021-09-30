@@ -2,9 +2,11 @@
 #include <LibRobus.h>
 
 void setup() {
-  //wdwadndwnadnnadwwad
+  //Initialisation de la plateforme.
+  BoardInit();
 }
 
+//Séquence principale.
 void loop() {
-  // put your main code here, to run repeatedly:
+  
 }
