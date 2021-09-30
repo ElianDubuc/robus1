@@ -1,7 +1,6 @@
-#include <Arduino.h>
-#include <LibRobus.h>
-
-void mouvement(int);
+#include <arduino.h>
+#include <stdio.h>
+#include <librobus.h>
 
 void setup() {
   //Initialisation de la plateforme.
@@ -10,12 +9,6 @@ void setup() {
 
 //Séquence principale.
 void loop() {
-  mouvement();
-}
-
-//La fonction mouvement prend une valeur de distnace en cm et
-//la convertis en pulses qui seront envoyés au encodeurs de moteur
-void mouvement(int dist);
-{
-
+  Serial.write(ENCODER_Read(0));
+  delay(2000);
 }
