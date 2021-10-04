@@ -8,7 +8,8 @@ void setup() {
 }
 //--------------------------------------------------
 //Prototypes des fonctions
-void movement(int);
+void mouvement(int);
+float distopulse(int);
 void debugWheels();
 
 //--------------------------------------------------
@@ -17,11 +18,14 @@ void debugWheels();
 //Circ. 23,9389cm
 //Séquence principale.
 void loop() {
+  Serial.println("The length is ");
+  mouvement(30);
+  
+  delay(5000);
+    //MOTOR_SetSpeed(LEFT, 1);
+    //MOTOR_SetSpeed(RIGHT, 0.25);
 
-    MOTOR_SetSpeed(LEFT, 1);
-    MOTOR_SetSpeed(RIGHT, 0.25);
-
-  debugWheels();
+  //debugWheels();
 }
 
 void debugWheels() {
@@ -32,15 +36,30 @@ void debugWheels() {
 }
 
 //Séquence de mouvement
-void movement(int dist)
+//La fonction prend comme entrée, la distance désirée en mm
+void mouvement(int dist)
 {
   int x;
-  MOTOR_SetSpeed(RIGHT, 0.25);
-  MOTOR_SetSpeed(LEFT, 0.24);
-  for(x = 0; x < dist; x++)
+  int length = distopulse(dist);
+  Serial.print("The length is: ");
+  Serial.print(length);
+  Serial.print("\n");
+
+  ENCODER_Reset(0);
+  do
   {
-    delay(2000);
-  }
+    MOTOR_SetSpeed(RIGHT, 0.25);
+    MOTOR_SetSpeed(LEFT, 0.24);
+    x = ENCODER_Read(0);
+    Serial.println(x);
+    delay(500);
+  }while(x < length);
+  /*for(x = 0; x < length/2; x++)
+  {
+    MOTOR_SetSpeed(RIGHT, 0.25);
+    MOTOR_SetSpeed(LEFT, 0.24);
+  }*/
+
   MOTOR_SetSpeed(RIGHT, 0);
   MOTOR_SetSpeed(LEFT, 0);
   
@@ -49,9 +68,9 @@ void movement(int dist)
 //Cette fonction convertis une distance en pulses
 //L'entrée est une distance en mm et sort le nombre de pulses
 //pour accomplir cette distance
-int distopulse(int dist)
+float distopulse(int dist)
 {
-  float nbpulses = 0;
-  nbpulses = dist/0.0748;
+  int nbpulses = 0;
+  nbpulses = dist/0.00748;
   return nbpulses;
 }
