@@ -53,3 +53,12 @@ void movement(int dist)
   
 }
 
+//Cette fonction convertis une distance en pulses
+//L'entrée est une distance en mm et sort le nombre de pulses
+//pour accomplir cette distance
+int distopulse(int dist)
+{
+  float nbpulses = 0;
+
+  nbpulses = dist/0.0748;
+}
