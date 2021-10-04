@@ -31,13 +31,6 @@ void debugWheels() {
   delay(1000);
 }
 
-//Séquence principale.
-void loop() {
-  movement(5);
-  Serial.write(ENCODER_Read(0));
-  delay(2000);
-}
-
 //Séquence de mouvement
 void movement(int dist)
 {
@@ -59,6 +52,6 @@ void movement(int dist)
 int distopulse(int dist)
 {
   float nbpulses = 0;
-
   nbpulses = dist/0.0748;
+  return nbpulses;
 }
