@@ -35,7 +35,7 @@ void debugWheels() {
   delay(1000);
 }
 
-//Séquence de mouvement
+//Séquence pour avancer
 //La fonction prend comme entrée, la distance désirée en mm
 void movefwd(int dist)
 {
@@ -74,4 +74,9 @@ float distopulse(int dist)
   int nbpulses = 0;
   nbpulses = dist/0.0748;
   return nbpulses;
+}
+
+void rotate1wheel(int roue, int angle)
+{
+  
 }
