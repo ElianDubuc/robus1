@@ -2,6 +2,9 @@
 #include <stdio.h>
 #include <librobus.h>
 
+#define PI 3.141592
+#define DIAMETREROB 190  //défini le rayon de rotation du robot quand il tourne
+
 void setup() {
   //Initialisation de la plateforme.
   BoardInit();
@@ -78,5 +81,15 @@ float distopulse(int dist)
 
 void rotate1wheel(int roue, int angle)
 {
+  int arc = PI*DIAMETREROB*(angle/360);
+  int x;
   
+  ENCODER_Reset(0);
+  do
+  {
+    MOTOR_SetSpeed(roue, 0.25);
+    x = ENCODER_Read(roue);
+    Serial.println(x);
+    delay(50);
+  }while(x < arc);
 }
