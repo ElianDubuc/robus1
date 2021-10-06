@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <librobus.h>
 
-#define PI 3.141592
 #define DIAMETREROB 190  //défini le rayon de rotation du robot quand il tourne
 
 void setup() {
@@ -14,7 +13,7 @@ void setup() {
 void movefwd(int);
 float distopulse(int);
 void debugWheels();
-
+void rotate2wheels(int);
 //--------------------------------------------------
 //Fonctions
 
@@ -23,12 +22,13 @@ void debugWheels();
 void loop() {
   Serial.println("The length is ");
   movefwd(300);
-  
+
   delay(5000);
     //MOTOR_SetSpeed(LEFT, 1);
     //MOTOR_SetSpeed(RIGHT, 0.25);
-
   //debugWheels();
+
+  rotate2wheels(90);
 }
 
 void debugWheels() {
@@ -96,11 +96,18 @@ void rotate1wheel(int roue, int angle)
 
 void rotate2wheels(int angle)
 { 
-  int dist;
+  int dist = 0;
   int arcrot = PI*DIAMETREROB*(angle/360);
+  ENCODER_Reset(0);
+  ENCODER_Reset(1);
   while(dist != arcrot)
   {
-    ;
-  }
-  
+    MOTOR_SetSpeed(RIGHT, 0.25);
+    /*MOTOR_SetSpeed(LEFT, 0.24);*/
+    dist = ENCODER_Read(RIGHT);
+    dist = ENCODER_Read(LEFT);
+    Serial.println(dist);
+    delay(100);
+    dist++;
+    }
 }
