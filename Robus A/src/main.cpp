@@ -93,3 +93,14 @@ void rotate1wheel(int roue, int angle)
     delay(50);
   }while(x < arc);
 }
+
+void rotate2wheels(int angle)
+{ 
+  int dist;
+  int arcrot = PI*DIAMETREROB*(angle/360);
+  while(dist != arcrot)
+  {
+    ;
+  }
+  
+}
