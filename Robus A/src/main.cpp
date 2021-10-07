@@ -15,7 +15,6 @@ void movefwd(int);
 float distopulse(int);
 void debugWheels();
 void ajustementPID();
-void avancer(int);
 void movement(int dist);
 
 void rotate2wheels(int);
@@ -23,40 +22,59 @@ void rotate2wheels(int);
 //Fonctions
 
 //Circ. 23,9389cm
+bool initial = true;
 //Séquence principale.
 void loop() {
-  debugWheels();
-  Serial.println("The length is ");
-  movefwd(300);
+  if(initial == true)
+  {
+    MOTOR_SetSpeed(LEFT, 0.25);
+    MOTOR_SetSpeed(RIGHT, 0.25);
+    initial = false;
+  }
 
-  delay(5000);
-    //MOTOR_SetSpeed(LEFT, 1);
-    //MOTOR_SetSpeed(RIGHT, 0.25);
-  //debugWheels();
-
-  rotate2wheels(90);
+  while(1)
+  {
+    ajustementPID();
+    delay(100);
+  }
 }
 
 //Affichage des valeurs des encodeurs
 void debugWheels() {
-  ENCODER_ReadReset(0);
-  ENCODER_ReadReset(1);
-  Serial.println(ENCODER_Read(0));
-  Serial.println(ENCODER_Read(1));
+  //ENCODER_ReadReset(LEFT);
+  //ENCODER_ReadReset(RIGHT);
+  Serial.println(ENCODER_Read(LEFT));
+  Serial.println(ENCODER_Read(RIGHT));
   Serial.println("--------------------");
-  delay(1000);
 }
 
-//
+
 void ajustementPID()
 {
-  int leftWheelRotation = ENCODER_Read(0);
-  int rightWheelRotation = ENCODER_Read(1);
+  double leftWheelRotation = ENCODER_ReadReset(LEFT);
+  double rightWheelRotation = ENCODER_ReadReset(RIGHT);
 
-  while(leftWheelRotation > rightWheelRotation)
+  if(leftWheelRotation > rightWheelRotation)
   {
-    MOTOR_SetSpeed(LEFT, 0.49);
-    MOTOR_SetSpeed(RIGHT, 0.5);
+    double rapport = leftWheelRotation / rightWheelRotation;
+    Serial.println(rapport);
+    MOTOR_SetSpeed(LEFT, 0.24);
+    MOTOR_SetSpeed(RIGHT, 0.25 * rapport);
+    Serial.println("Ajustement gauche");
+    Serial.println(leftWheelRotation);
+    Serial.println(rightWheelRotation);
+    Serial.println("----------------");
+  }
+  else if (leftWheelRotation < rightWheelRotation)
+  {
+    double rapport = rightWheelRotation / leftWheelRotation;
+    Serial.println(rapport);
+    MOTOR_SetSpeed(LEFT, 0.24 * rapport);
+    MOTOR_SetSpeed(RIGHT, 0.25);
+    Serial.println("Ajustement droit");
+    Serial.println(leftWheelRotation);
+    Serial.println(rightWheelRotation);
+    Serial.println("----------------");
   }
 }
 
@@ -74,10 +92,8 @@ void movefwd(int dist)
   do
   {
     MOTOR_SetSpeed(RIGHT, 0.25);
-    MOTOR_SetSpeed(LEFT, 0.24);
-    x = ENCODER_Read(0);
-    Serial.println(x);
-    delay(50);
+    MOTOR_SetSpeed(LEFT, 0.25);
+    ajustementPID();
   }
   while(x < length);
   /*for(x = 0; x < length/2; x++)
