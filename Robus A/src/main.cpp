@@ -4,7 +4,7 @@
 #include <math.h>
 
 #define circonference = 23.9389;
-#define DIAMETREROB 380  //défini le rayon de rotation du robot quand il tourne
+#define DIAMETREROB 370  //défini le rayon de rotation du robot quand il tourne
 
 void setup() {
   //Initialisation de la plateforme.
@@ -26,12 +26,33 @@ void rotate2wheels(int);
 
 //Circ. 23,9389cm
 bool initial = true;
+
+
 //Séquence principale.
 void loop() {
-  //movefwd(300);
+  if(initial == true)
+  {
+    MOTOR_SetSpeed(LEFT, 0.25);
+    MOTOR_SetSpeed(RIGHT, 0.25);
+    initial = false;
+  }
+  movefwd(2000);
+  delay(500);
+  rotate1wheel(0, 90);
+  delay(500);
+  movefwd(550);
+  delay(500);
   rotate1wheel(1, 90);
+  delay(500);
+  movefwd(450);
+  delay(500);
+  rotate1wheel(1, 90);
+  delay(500);
+  movefwd(550);
+  delay(500);
+  rotate1wheel(0, 90);
   
-  delay(5000);
+  delay(1000);
     //MOTOR_SetSpeed(LEFT, 1);
     //MOTOR_SetSpeed(RIGHT, 0.25);
   //debugWheels();
@@ -59,7 +80,7 @@ void ajustementPID()
   {
     double rapport = leftWheelRotation / rightWheelRotation;
     Serial.println(rapport);
-    MOTOR_SetSpeed(LEFT, 0.24);
+    MOTOR_SetSpeed(LEFT, 0.25);
     MOTOR_SetSpeed(RIGHT, 0.25 * rapport);
     Serial.println("Ajustement gauche");
     Serial.println(leftWheelRotation);
@@ -70,7 +91,7 @@ void ajustementPID()
   {
     double rapport = rightWheelRotation / leftWheelRotation;
     Serial.println(rapport);
-    MOTOR_SetSpeed(LEFT, 0.24 * rapport);
+    MOTOR_SetSpeed(LEFT, 0.25 * rapport);
     MOTOR_SetSpeed(RIGHT, 0.25);
     Serial.println("Ajustement droit");
     Serial.println(leftWheelRotation);
@@ -92,11 +113,10 @@ void movefwd(int dist)
   ENCODER_Reset(0);
   do
   {
-    MOTOR_SetSpeed(RIGHT, 0.25);
-    MOTOR_SetSpeed(LEFT, 0.24);
+    ajustementPID();
     x = ENCODER_Read(0);
     Serial.println(x);
-    delay(50);
+    delay(10);
   }while(x < length);
  
   MOTOR_SetSpeed(RIGHT, 0);
@@ -136,7 +156,7 @@ void rotate1wheel(int dir, float angle)
   Serial.println(x);
   while(x < arc)
   {
-    MOTOR_SetSpeed(moteur, 0.15);
+    MOTOR_SetSpeed(moteur, 0.25);
     x = ENCODER_Read(moteur);
   }
 
