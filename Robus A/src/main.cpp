@@ -3,6 +3,7 @@
 #include <librobus.h>
 
 #define circonference = 23.9389;
+#define DIAMETREROB 190  //défini le rayon de rotation du robot quand il tourne
 
 void setup() {
   //Initialisation de la plateforme.
@@ -10,27 +11,30 @@ void setup() {
 }
 //--------------------------------------------------
 //Prototypes des fonctions
-void movement(int);
+void movefwd(int);
+float distopulse(int);
 void debugWheels();
 void ajustementPID();
 void avancer(int);
+void movement(int dist);
 
+void rotate2wheels(int);
 //--------------------------------------------------
 //Fonctions
 
 //Circ. 23,9389cm
 //Séquence principale.
 void loop() {
-  avancer(1);
   debugWheels();
-}
+  Serial.println("The length is ");
+  movefwd(300);
 
-//Permet d'avancer tout droit. Unité en cm
-void avancer(int dist)
-{
-  MOTOR_SetSpeed(LEFT, 0.25);
-  MOTOR_SetSpeed(RIGHT, 0.24);
-  ajustementPID();
+  delay(5000);
+    //MOTOR_SetSpeed(LEFT, 1);
+    //MOTOR_SetSpeed(RIGHT, 0.25);
+  //debugWheels();
+
+  rotate2wheels(90);
 }
 
 //Affichage des valeurs des encodeurs
@@ -56,18 +60,77 @@ void ajustementPID()
   }
 }
 
-//Séquence de mouvement
-void movement(int dist)
+//Séquence pour avancer
+//La fonction prend comme entrée, la distance désirée en mm
+void movefwd(int dist)
 {
-  int x;
-  MOTOR_SetSpeed(RIGHT, 0.25);
-  MOTOR_SetSpeed(LEFT, 0.24);
-  for(x = 0; x < dist; x++)
+  int x = 0;
+  int length = distopulse(dist);
+  Serial.print("The length is: ");
+  Serial.print(length);
+  Serial.print("\n");
+
+  ENCODER_Reset(0);
+  do
   {
-    delay(2000);
+    MOTOR_SetSpeed(RIGHT, 0.25);
+    MOTOR_SetSpeed(LEFT, 0.24);
+    x = ENCODER_Read(0);
+    Serial.println(x);
+    delay(50);
   }
+  while(x < length);
+  /*for(x = 0; x < length/2; x++)
+  
+  {
+    MOTOR_SetSpeed(RIGHT, 0.25);
+    MOTOR_SetSpeed(LEFT, 0.24);
+  }*/
+
   MOTOR_SetSpeed(RIGHT, 0);
   MOTOR_SetSpeed(LEFT, 0);
   
 }
 
+//Cette fonction convertis une distance en pulses
+//L'entrée est une distance en mm et sort le nombre de pulses
+//pour accomplir cette distance
+float distopulse(int dist)
+{
+  int nbpulses = 0;
+  nbpulses = dist/0.0748;
+  return nbpulses;
+}
+
+void rotate1wheel(int roue, int angle)
+{
+  int arc = PI*DIAMETREROB*(angle/360);
+  int x;
+  
+  ENCODER_Reset(0);
+  do
+  {
+    MOTOR_SetSpeed(roue, 0.25);
+    x = ENCODER_Read(roue);
+    Serial.println(x);
+    delay(50);
+  }while(x < arc);
+}
+
+void rotate2wheels(int angle)
+{ 
+  int dist = 0;
+  int arcrot = PI*DIAMETREROB*(angle/360);
+  ENCODER_Reset(0);
+  ENCODER_Reset(1);
+  while(dist != arcrot)
+  {
+    MOTOR_SetSpeed(RIGHT, 0.25);
+    /*MOTOR_SetSpeed(LEFT, 0.24);*/
+    dist = ENCODER_Read(RIGHT);
+    dist = ENCODER_Read(LEFT);
+    Serial.println(dist);
+    delay(100);
+    dist++;
+    }
+}
