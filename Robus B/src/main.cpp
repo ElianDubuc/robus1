@@ -1,17 +1,24 @@
 #include <Arduino.h>
 #include <stdio.h>
 #include <LibRobus.h>
+#include <math.h>
 
 #define PULSES_PAR_TOUR 3200
 #define PULSES_PAR_SEC 10000 //7025
 #define DELAY_LOOP 50
+#define CONVERTION_PULSE 133.67
 
 #define KP 0.00002
 #define KI 0.0005
+#define KP 0.0002
+
+#define DIAMETRE 20
 
 
 
 void deplacement(float, float);
+void tourner(float);
+void tournerSurLui(float);
 
 void setup() {
   // put your setup code here, to run once: :')
@@ -104,4 +111,34 @@ void deplacement(float d, float v)
   }
   MOTOR_SetSpeed(LEFT, 0);
   MOTOR_SetSpeed(RIGHT, 0);
+}
+
+void tourner(float angle)
+{
+  ENCODER_Reset(LEFT);
+  ENCODER_Reset(RIGHT);
+  float arc =  2 * PI * DIAMETRE * (abs(angle)/360);
+  float dist_pulse = arc * CONVERTION_PULSE;
+
+  if(angle > 0)
+  {
+    while(ENCODER_Read(LEFT) <= dist_pulse)
+    {
+      MOTOR_SetSpeed(LEFT, 0.5);
+    }
+    MOTOR_SetSpeed(LEFT, 0);
+  }
+  else
+  {
+    while(ENCODER_Read(RIGHT) <= dist_pulse)
+    {
+      MOTOR_SetSpeed(RIGHT, 0.5);
+    }
+    MOTOR_SetSpeed(RIGHT, 0);
+  }
+}
+
+void tournerSurLui(float angle)
+{
+
 }
