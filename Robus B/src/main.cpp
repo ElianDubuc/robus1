@@ -8,8 +8,8 @@
 #define DELAY_LOOP 50
 #define CONVERTION_PULSE 133.67
 
-#define KP 0.00002
-#define KI 0.0005
+#define KP 0.00001
+#define KI 0.00025
 
 #define DIAMETRE 20
 
@@ -20,7 +20,7 @@ void tournerSurLui(float);
 void setup() {
   // put your setup code here, to run once: :')
   BoardInit();
-  deplacement(5, 0.40);
+  deplacement(100, 0.05);
 
   /*
   ENCODER_Reset(LEFT);
@@ -71,7 +71,7 @@ void deplacement(float d, float v)
 
   loopCnt = 0;
 
-  while(ENCODER_Read(LEFT) <= d*PULSES_PAR_TOUR)
+  while(ENCODER_Read(LEFT) <= d*CONVERTION_PULSE)
   {
     
     pulseTh = loopCnt * PULSE_PER_DELAY;
@@ -109,7 +109,7 @@ void deplacement(float d, float v)
   MOTOR_SetSpeed(RIGHT, 0);
 }
 
-void tourner(float ngle)
+void tourner(float angle)
 {
   ENCODER_Reset(LEFT);
   ENCODER_Reset(RIGHT);
