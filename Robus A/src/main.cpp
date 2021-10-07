@@ -16,7 +16,7 @@ void movefwd(int);
 int distopulse(float);
 void debugWheels();
 void rotate1wheel(int, float);
-
+void rotate2wheels(int);
 //--------------------------------------------------
 //Fonctions
 
@@ -29,8 +29,9 @@ void loop() {
   delay(5000);
     //MOTOR_SetSpeed(LEFT, 1);
     //MOTOR_SetSpeed(RIGHT, 0.25);
-
   //debugWheels();
+
+  //rotate2wheels(90);
 }
 
 //--------------------------------------------------
@@ -109,12 +110,19 @@ void rotate1wheel(int dir, float angle)
 /*
 void rotate2wheels(int angle)
 { 
-  int dist;
+  int dist = 0;
   int arcrot = PI*DIAMETREROB*(angle/360);
+  ENCODER_Reset(0);
+  ENCODER_Reset(1);
   while(dist != arcrot)
   {
-    ;
-  }
-  
+    MOTOR_SetSpeed(RIGHT, 0.25);
+    MOTOR_SetSpeed(LEFT, 0.24);
+    dist = ENCODER_Read(RIGHT);
+    dist = ENCODER_Read(LEFT);
+    Serial.println(dist);
+    delay(100);
+    dist++;
+    }
 }
 */
