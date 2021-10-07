@@ -1,19 +1,21 @@
 #include <arduino.h>
 #include <stdio.h>
 #include <librobus.h>
+#include <math.h>
 
-#define PI 3.141592
-#define DIAMETREROB 190  //défini le rayon de rotation du robot quand il tourne
+#define DIAMETREROB 380  //défini le rayon de rotation du robot quand il tourne
 
 void setup() {
   //Initialisation de la plateforme.
   BoardInit();
 }
+
 //--------------------------------------------------
 //Prototypes des fonctions
 void movefwd(int);
-float distopulse(int);
+int distopulse(float);
 void debugWheels();
+void rotate1wheel(int, float);
 
 //--------------------------------------------------
 //Fonctions
@@ -21,8 +23,8 @@ void debugWheels();
 //Circ. 23,9389cm
 //Séquence principale.
 void loop() {
-  Serial.println("The length is ");
-  movefwd(300);
+  //movefwd(300);
+  rotate1wheel(1, 90);
   
   delay(5000);
     //MOTOR_SetSpeed(LEFT, 1);
@@ -31,6 +33,8 @@ void loop() {
   //debugWheels();
 }
 
+//--------------------------------------------------
+//Fonctions secondaires
 void debugWheels() {
   Serial.println(ENCODER_Read(0));
   Serial.println(ENCODER_Read(1));
@@ -44,9 +48,9 @@ void movefwd(int dist)
 {
   int x = 0;
   int length = distopulse(dist);
-  Serial.print("The length is: ");
-  Serial.print(length);
-  Serial.print("\n");
+  //Serial.print("The length is: ");
+  //Serial.print(length);
+  //Serial.print("\n");
 
   ENCODER_Reset(0);
   do
@@ -57,13 +61,7 @@ void movefwd(int dist)
     Serial.println(x);
     delay(50);
   }while(x < length);
-  /*for(x = 0; x < length/2; x++)
-  
-  {
-    MOTOR_SetSpeed(RIGHT, 0.25);
-    MOTOR_SetSpeed(LEFT, 0.24);
-  }*/
-
+ 
   MOTOR_SetSpeed(RIGHT, 0);
   MOTOR_SetSpeed(LEFT, 0);
   
@@ -72,28 +70,43 @@ void movefwd(int dist)
 //Cette fonction convertis une distance en pulses
 //L'entrée est une distance en mm et sort le nombre de pulses
 //pour accomplir cette distance
-float distopulse(int dist)
+int distopulse(float dist)
 {
   int nbpulses = 0;
-  nbpulses = dist/0.0748;
+  nbpulses = dist*13.367;
+  //nbpulses = dist/0.0748;
   return nbpulses;
 }
 
-void rotate1wheel(int roue, int angle)
+//Fonction qui fait tourner le robot en utilisant seulement une roue.
+//Première entrée est la direction (0 pour gauche, 1 pour droite) et la
+//Deuxieme entrée est l'angle de rotation désirée.
+void rotate1wheel(int dir, float angle)
 {
-  int arc = PI*DIAMETREROB*(angle/360);
-  int x;
-  
-  ENCODER_Reset(0);
-  do
+  int arc = distopulse(PI*DIAMETREROB*(angle/360));
+  //Serial.print("La distance de rotation est:");
+  //Serial.print(arc);
+  //Serial.print("\n");
+  int x, moteur;
+  if(dir == 0)
+    moteur = 1;
+  if(dir == 1 )
+    moteur = 0;
+
+  //Serial.println("La valeur de l'encodeur est:");
+  ENCODER_Reset(moteur);
+  x = ENCODER_Read(moteur);
+  Serial.println(x);
+  while(x < arc)
   {
-    MOTOR_SetSpeed(roue, 0.25);
-    x = ENCODER_Read(roue);
-    Serial.println(x);
-    delay(50);
-  }while(x < arc);
+    MOTOR_SetSpeed(moteur, 0.15);
+    x = ENCODER_Read(moteur);
+  }
+
+  MOTOR_SetSpeed(moteur, 0);
 }
 
+/*
 void rotate2wheels(int angle)
 { 
   int dist;
@@ -104,3 +117,4 @@ void rotate2wheels(int angle)
   }
   
 }
+*/
