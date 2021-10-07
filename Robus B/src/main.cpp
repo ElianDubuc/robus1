@@ -10,11 +10,8 @@
 
 #define KP 0.00002
 #define KI 0.0005
-#define KP 0.0002
 
 #define DIAMETRE 20
-
-
 
 void deplacement(float, float);
 void tourner(float);
@@ -45,7 +42,6 @@ void deplacement(float d, float v)
   int loopCnt = 0;
   double pulseTh = 0; //Pulse théorique
   double lastPulseTh = 0;
-
 
   int pulsePrLeft = 0; //Pulse pratique
   int diffLeft = 0;
@@ -113,7 +109,7 @@ void deplacement(float d, float v)
   MOTOR_SetSpeed(RIGHT, 0);
 }
 
-void tourner(float angle)
+void tourner(float ngle)
 {
   ENCODER_Reset(LEFT);
   ENCODER_Reset(RIGHT);
