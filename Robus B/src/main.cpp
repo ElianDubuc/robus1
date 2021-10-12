@@ -10,7 +10,7 @@
 #define CONVERTION_ANGLE 1.8
 
 #define KP 0.00001
-#define KI 0.00025
+#define KI 0.0004
 
 #define DIAMETRE_ROBOT 18.6
 
@@ -22,7 +22,7 @@ float ajustementAngle(float, float);
 void setup() {
   // put your setup code here, to run once: :')
   BoardInit();
-  deplacement(100, 0.05);
+  deplacement(210, 0.2);
 
   /*
   ENCODER_Reset(LEFT);
@@ -36,15 +36,6 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
   //Serial.print(ENCODER_Read(0));
-  deplacement(210, 0.40);
-  tourner(-90);
-  deplacement(40, 0.40);
-  tourner(90);
-  deplacement(45, 0.40);
-  tourner(90);
-  deplacement(50, 0.40);
-  tourner(-90);
-  delay(2000);
 }
 
 void deplacement(float d, float v)
