@@ -29,7 +29,22 @@ float ajustementAngle(float, float);
 void setup() {
   // put your setup code here, to run once: :')
   BoardInit();
-  deplacement(210, false);
+  deplacement(210, 0.2);
+  tourner(-90);
+  deplacement(33, 0.2);
+  tourner(90);
+  deplacement(30, 0.2);
+  tourner(90);
+  deplacement(35, 0.2);
+  tourner(-45);
+  deplacement(47, 0.2);
+  tourner(-90);
+  deplacement(60, 0.2);
+  tourner(45);
+  deplacement(40, 0.2);
+  tourner(25);
+  deplacement(75, 0.2);
+  tournerSurLui(180);
 
   /*
   ENCODER_Reset(LEFT);
