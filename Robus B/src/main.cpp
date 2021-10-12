@@ -4,7 +4,7 @@
 #include <math.h>
 
 #define PULSES_PAR_TOUR 3200
-#define PULSES_PAR_SEC 10000 //7025
+#define PULSES_PAR_SEC 20000 //7025
 #define DELAY_LOOP 50
 #define VITESSE_DEPART 0.2
 
@@ -16,8 +16,8 @@
 #define DECELERATION 0.01
 #define POURCENT_DECEL 0.9
 
-#define KP 0.00001
-#define KI 0.0004
+#define KP 0.00005
+#define KI 0.0002
 
 #define DIAMETRE_ROBOT 18.6
 
@@ -29,7 +29,7 @@ float ajustementAngle(float, float);
 void setup() {
   // put your setup code here, to run once: :')
   BoardInit();
-  deplacement(210, true);
+  deplacement(210, false);
 
   /*
   ENCODER_Reset(LEFT);
@@ -51,7 +51,6 @@ void deplacement(float d, bool decel)
   int loopCnt = 0;
   int preDecec = 0;
   double pulseTh = 0; //Pulse théorique
-  double lastPulseTh = 0;
   double speed = NORMAL_SPEED;
 
   int pulsePrLeft = 0; //Pulse pratique
