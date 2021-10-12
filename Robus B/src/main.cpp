@@ -6,15 +6,22 @@
 #define PULSES_PAR_TOUR 3200
 #define PULSES_PAR_SEC 10000 //7025
 #define DELAY_LOOP 50
+#define VITESSE_DEPART 0.2
+
 #define CONVERTION_PULSE 133.67
 #define CONVERTION_ANGLE 1.8
+
+#define MIN_SPEED 0.1
+#define NORMAL_SPEED 0.38
+#define DECELERATION 0.01
+#define POURCENT_DECEL 0.9
 
 #define KP 0.00001
 #define KI 0.0004
 
 #define DIAMETRE_ROBOT 18.6
 
-void deplacement(float, float);
+void deplacement(float, bool);
 void tourner(float);
 void tournerSurLui(float);
 float ajustementAngle(float, float);
@@ -53,12 +60,14 @@ void loop() {
   //Serial.print(ENCODER_Read(0));
 }
 
-void deplacement(float d, float v)
+void deplacement(float d, bool decel)
 {
   double PULSE_PER_DELAY = PULSES_PAR_SEC / 20;
   int loopCnt = 0;
+  int preDecec = 0;
   double pulseTh = 0; //Pulse théorique
   double lastPulseTh = 0;
+  double speed = NORMAL_SPEED;
 
   int pulsePrLeft = 0; //Pulse pratique
   int diffLeft = 0;
@@ -77,16 +86,14 @@ void deplacement(float d, float v)
 
   if(d > 0)
   {
-    MOTOR_SetSpeed(LEFT, v);
-    MOTOR_SetSpeed(RIGHT, v);
+    MOTOR_SetSpeed(LEFT, VITESSE_DEPART);
+    MOTOR_SetSpeed(RIGHT, VITESSE_DEPART);
   }
   else if(d < 0)
   {
-    MOTOR_SetSpeed(LEFT, -v);
-    MOTOR_SetSpeed(RIGHT, -v);
+    MOTOR_SetSpeed(LEFT, -VITESSE_DEPART);
+    MOTOR_SetSpeed(RIGHT, -VITESSE_DEPART);
   }
-
-  loopCnt = 0;
 
   while(ENCODER_Read(LEFT) <= d*CONVERTION_PULSE)
   {
@@ -110,11 +117,21 @@ void deplacement(float d, float v)
     lastPulseRight = pulsePrRight;
     diffRight = pulseTh - pulsePrRight;
 
-    MOTOR_SetSpeed(LEFT, v + KPDiffLeft*KP + diffLeft*KI);
-    MOTOR_SetSpeed(RIGHT, v + KPDiffRight*KP + diffRight*KI);
-    
+    if(ENCODER_Read(LEFT) > d*CONVERTION_PULSE*POURCENT_DECEL && decel == true){
+      speed = speed - (loopCnt - preDecec)*DECELERATION;
+      if(speed < MIN_SPEED){
+        speed = MIN_SPEED;
+      }
+      Serial.println(speed);
+      MOTOR_SetSpeed(LEFT, speed);
+      MOTOR_SetSpeed(RIGHT, speed);
+    }else{
+      MOTOR_SetSpeed(LEFT, VITESSE_DEPART + KPDiffLeft*KP + diffLeft*KI);
+      MOTOR_SetSpeed(RIGHT, VITESSE_DEPART + KPDiffRight*KP + diffRight*KI);
+      preDecec = loopCnt;
+    }
 
-    Serial.print(loopCnt); Serial.print("\tThéorique: "); Serial.print(pulseTh); Serial.print("\tPratique G: "); Serial.print(pulsePrLeft); Serial.print("\tPratique D: "); Serial.print(pulsePrRight);Serial.print("\tV Mot G: "); Serial.print(v + diffLeft*KI); Serial.print("\tV Mot D: "); Serial.print(v + diffRight*KI); Serial.print("\tKP Left : "); Serial.print(KPDiffLeft);Serial.print("\tKP Right : "); Serial.println(KPDiffRight);
+    Serial.print(loopCnt); Serial.print("\tThéorique: "); Serial.print(pulseTh); Serial.print("\tPratique G: "); Serial.print(pulsePrLeft); Serial.print("\tPratique D: "); Serial.print(pulsePrRight);Serial.print("\tV Mot G: "); Serial.print(VITESSE_DEPART + diffLeft*KI); Serial.print("\tV Mot D: "); Serial.print(VITESSE_DEPART + diffRight*KI); Serial.print("\tKP Left : "); Serial.print(KPDiffLeft);Serial.print("\tKP Right : "); Serial.println(KPDiffRight);
     delay(DELAY_LOOP);
     loopCnt++;
   }
