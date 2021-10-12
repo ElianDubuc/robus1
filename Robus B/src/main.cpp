@@ -7,20 +7,23 @@
 #define PULSES_PAR_SEC 10000 //7025
 #define DELAY_LOOP 50
 #define CONVERTION_PULSE 133.67
+#define CONVERTION_ANGLE 1.8
 
 #define KP 0.00002
 #define KI 0.0005
 
-#define DIAMETRE 20
+#define DIAMETRE_ROBOT 18.6
 
 void deplacement(float, float);
 void tourner(float);
 void tournerSurLui(float);
+float ajustementAngle(float, float);
 
 void setup() {
   // put your setup code here, to run once: :')
   BoardInit();
-  deplacement(5, 0.40);
+  //tourner(90);
+  //deplacement(5, 0.40);
 
   /*
   ENCODER_Reset(LEFT);
@@ -34,6 +37,15 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
   //Serial.print(ENCODER_Read(0));
+  deplacement(210, 0.40);
+  tourner(-90);
+  deplacement(40, 0.40);
+  tourner(90);
+  deplacement(45, 0.40);
+  tourner(90);
+  deplacement(50, 0.40);
+  tourner(-90);
+  delay(2000);
 }
 
 void deplacement(float d, float v)
@@ -70,14 +82,14 @@ void deplacement(float d, float v)
   }
 
   loopCnt = 0;
-
+  d = d/23.9389;
   while(ENCODER_Read(LEFT) <= d*PULSES_PAR_TOUR)
   {
     
     pulseTh = loopCnt * PULSE_PER_DELAY;
 
 
-    pulsePrLeft = ENCODER_Read(LEFT);///Ajst Gauche
+    pulsePrLeft = ENCODER_Read(LEFT);//Ajst Gauche
 
     KPDiffPrLeft = pulsePrLeft - lastPulseLeft;
     KPDiffLeft = PULSE_PER_DELAY - KPDiffPrLeft;
@@ -85,9 +97,7 @@ void deplacement(float d, float v)
     lastPulseLeft = pulsePrLeft;
     diffLeft = pulseTh - pulsePrLeft;
 
-
-//Ajst Droit
-    pulsePrRight = ENCODER_Read(RIGHT);
+    pulsePrRight = ENCODER_Read(RIGHT);//Ajst Droit
 
     KPDiffPrRight = pulsePrRight - lastPulseRight;
     KPDiffRight = PULSE_PER_DELAY - KPDiffPrRight;
@@ -95,10 +105,8 @@ void deplacement(float d, float v)
     lastPulseRight = pulsePrRight;
     diffRight = pulseTh - pulsePrRight;
 
-    //if(loopCnt > 10){
-        MOTOR_SetSpeed(LEFT, v + KPDiffLeft*KP + diffLeft*KI);
-        MOTOR_SetSpeed(RIGHT, v + KPDiffRight*KP + diffRight*KI);
-      //}
+    MOTOR_SetSpeed(LEFT, v + KPDiffLeft*KP + diffLeft*KI);
+    MOTOR_SetSpeed(RIGHT, v + KPDiffRight*KP + diffRight*KI);
     
 
     Serial.print(loopCnt); Serial.print("\tThéorique: "); Serial.print(pulseTh); Serial.print("\tPratique G: "); Serial.print(pulsePrLeft); Serial.print("\tPratique D: "); Serial.print(pulsePrRight);Serial.print("\tV Mot G: "); Serial.print(v + diffLeft*KI); Serial.print("\tV Mot D: "); Serial.print(v + diffRight*KI); Serial.print("\tKP Left : "); Serial.print(KPDiffLeft);Serial.print("\tKP Right : "); Serial.println(KPDiffRight);
@@ -109,18 +117,18 @@ void deplacement(float d, float v)
   MOTOR_SetSpeed(RIGHT, 0);
 }
 
-void tourner(float ngle)
+void tourner(float angle)
 {
   ENCODER_Reset(LEFT);
   ENCODER_Reset(RIGHT);
-  float arc =  2 * PI * DIAMETRE * (abs(angle)/360);
+  float arc =  2 * PI * DIAMETRE_ROBOT * (abs(angle)/360);
   float dist_pulse = arc * CONVERTION_PULSE;
 
   if(angle > 0)
   {
     while(ENCODER_Read(LEFT) <= dist_pulse)
     {
-      MOTOR_SetSpeed(LEFT, 0.5);
+      MOTOR_SetSpeed(LEFT, 0.4);
     }
     MOTOR_SetSpeed(LEFT, 0);
   }
@@ -128,7 +136,7 @@ void tourner(float ngle)
   {
     while(ENCODER_Read(RIGHT) <= dist_pulse)
     {
-      MOTOR_SetSpeed(RIGHT, 0.5);
+      MOTOR_SetSpeed(RIGHT, 0.4);
     }
     MOTOR_SetSpeed(RIGHT, 0);
   }
@@ -136,5 +144,35 @@ void tourner(float ngle)
 
 void tournerSurLui(float angle)
 {
+  ENCODER_Reset(LEFT);
+  ENCODER_Reset(RIGHT);
+  float arc = PI * DIAMETRE_ROBOT * (abs(angle)/360);
+  float dist_pulse = arc * CONVERTION_PULSE;
 
+  if(angle > 0)
+  {
+    while(ENCODER_Read(LEFT) <= dist_pulse)
+    {
+      MOTOR_SetSpeed(LEFT, 0.4);
+      MOTOR_SetSpeed(RIGHT, -0.4);
+    }
+    MOTOR_SetSpeed(LEFT, 0);
+    MOTOR_SetSpeed(RIGHT, 0);
+  }
+  else
+  {
+    while(ENCODER_Read(RIGHT) <= dist_pulse)
+    {
+      MOTOR_SetSpeed(RIGHT, 0.4);
+      MOTOR_SetSpeed(LEFT, -0.4);
+    }
+    MOTOR_SetSpeed(RIGHT, 0);
+    MOTOR_SetSpeed(LEFT, 0);
+  }
+}
+
+float ajustementAngle(float angle, float dist)
+{
+  float ajustement = angle * CONVERTION_ANGLE;
+  return dist - ajustement;
 }
