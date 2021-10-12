@@ -9,8 +9,8 @@
 #define CONVERTION_PULSE 133.67
 #define CONVERTION_ANGLE 1.8
 
-#define KP 0.00002
-#define KI 0.0005
+#define KP 0.00001
+#define KI 0.00025
 
 #define DIAMETRE_ROBOT 18.6
 
@@ -22,8 +22,7 @@ float ajustementAngle(float, float);
 void setup() {
   // put your setup code here, to run once: :')
   BoardInit();
-  //tourner(90);
-  //deplacement(5, 0.40);
+  deplacement(100, 0.05);
 
   /*
   ENCODER_Reset(LEFT);
@@ -82,8 +81,8 @@ void deplacement(float d, float v)
   }
 
   loopCnt = 0;
-  d = d/23.9389;
-  while(ENCODER_Read(LEFT) <= d*PULSES_PAR_TOUR)
+
+  while(ENCODER_Read(LEFT) <= d*CONVERTION_PULSE)
   {
     
     pulseTh = loopCnt * PULSE_PER_DELAY;
