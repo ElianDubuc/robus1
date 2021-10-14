@@ -4,7 +4,7 @@
 #include <math.h>
 
 #define PULSES_PAR_TOUR 3200
-#define PULSES_PAR_SEC 20000 //7025
+#define PULSES_PAR_SEC 15000 //7025
 #define DELAY_LOOP 50
 #define VITESSE_DEPART 0.2
 
@@ -28,23 +28,42 @@ float ajustementAngle(float, float);
 
 void setup() {
   // put your setup code here, to run once: :')
+
+  //Alle du parcours
   BoardInit();
-  deplacement(210, 0.2);
+  deplacement(210, true);
   tourner(-90);
-  deplacement(33, 0.2);
+  deplacement(30, true);
   tourner(90);
-  deplacement(30, 0.2);
+  deplacement(28, true);
   tourner(90);
-  deplacement(35, 0.2);
+  deplacement(30, true);
   tourner(-45);
-  deplacement(47, 0.2);
+  /*deplacement(50, true);
   tourner(-90);
-  deplacement(60, 0.2);
+  deplacement(60, true);
   tourner(45);
-  deplacement(40, 0.2);
-  tourner(25);
-  deplacement(75, 0.2);
-  tournerSurLui(180);
+  deplacement(40, true);
+  tourner(23);
+  deplacement(80, true);
+  tournerSurLui(180);*/
+
+  //Retour du parcours
+ /*deplacement(80, true);
+  tourner(-18);
+  deplacement(40, true);
+  tourner(-45);
+  deplacement(60, true);
+  tourner(90);
+  deplacement(45, true);
+  tourner(45);
+  deplacement(35, true);
+  tourner(-90);
+  deplacement(28, true);
+  tourner(-90);
+  deplacement(33, true);
+  tourner(90);
+  deplacement(210, true);*/
 
   /*
   ENCODER_Reset(LEFT);
@@ -140,6 +159,7 @@ void deplacement(float d, bool decel)
 
 void tourner(float angle)
 {
+  delay(50);
   ENCODER_Reset(LEFT);
   ENCODER_Reset(RIGHT);
   float arc =  2 * PI * DIAMETRE_ROBOT * (abs(angle)/360);
