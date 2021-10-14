@@ -19,7 +19,11 @@
 #define KP 0.00005
 #define KI 0.0002
 
-#define DIAMETRE_ROBOT 18.6
+//ROBOT A:
+#define DIAMETRE_ROBOT 18.38
+
+//ROBOT B:
+//#define DIAMETRE_ROBOT 18.47
 
 void deplacement(float, bool);
 void tourner(float);
@@ -31,7 +35,12 @@ void setup() {
 
   //Alle du parcours
   BoardInit();
-  deplacement(210, true);
+
+  for(int i = 0; i < 16; i++){
+    tourner(90);
+    delay(500);
+  }
+  //deplacement(210, true);
   /*
   tourner(-90);
   deplacement(30, true);
