@@ -12,9 +12,9 @@
 #define CONVERTION_ANGLE 1.8
 
 #define MIN_SPEED 0.1
-#define NORMAL_SPEED 0.38
+#define NORMAL_SPEED 0.55
 #define DECELERATION 0.01
-#define POURCENT_DECEL 0.9
+#define POURCENT_DECEL 0.8
 
 #define KP 0.00005
 #define KI 0.0002
@@ -32,6 +32,7 @@ void setup() {
   //Alle du parcours
   BoardInit();
   deplacement(210, true);
+  /*
   tourner(-90);
   deplacement(30, true);
   tourner(90);
