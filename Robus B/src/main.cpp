@@ -29,49 +29,6 @@ float ajustementAngle(float, float);
 void setup() {
   // put your setup code here, to run once: :')
 
-  //Alle du parcours
-  BoardInit();
-  deplacement(210, true);
-  tourner(-90);
-  deplacement(30, true);
-  tourner(90);
-  deplacement(28, true);
-  tourner(90);
-  deplacement(30, true);
-  tourner(-45);
-  /*deplacement(50, true);
-  tourner(-90);
-  deplacement(60, true);
-  tourner(45);
-  deplacement(40, true);
-  tourner(23);
-  deplacement(80, true);
-  tournerSurLui(180);*/
-
-  //Retour du parcours
- /*deplacement(80, true);
-  tourner(-18);
-  deplacement(40, true);
-  tourner(-45);
-  deplacement(60, true);
-  tourner(90);
-  deplacement(45, true);
-  tourner(45);
-  deplacement(35, true);
-  tourner(-90);
-  deplacement(28, true);
-  tourner(-90);
-  deplacement(33, true);
-  tourner(90);
-  deplacement(210, true);*/
-
-  /*
-  ENCODER_Reset(LEFT);
-  MOTOR_SetSpeed(LEFT, 0.65);
-  delay(1000);
-  Serial.println(ENCODER_Read(0));
-  MOTOR_SetSpeed(LEFT, 0);
-*/
 }
 
 void loop() {
