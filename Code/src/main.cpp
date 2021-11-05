@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <LibRobus.h>
 #include <math.h>
+#include "Adafruit_TCS34725.h"
+#include <Wire.h>
 
 #define PULSES_PAR_TOUR 3200
 #define PULSES_PAR_SEC 15000 //7025
@@ -26,14 +28,19 @@ void tourner(float);
 void tournerSurLui(float);
 float ajustementAngle(float, float);
 
+
 void setup() {
   // put your setup code here, to run once: :')
-
+  
 }
+
+
 
 void loop() {
   // put your main code here, to run repeatedly:
   //Serial.print(ENCODER_Read(0));
+  
+  
 }
 
 void deplacement(float d, bool decel)
