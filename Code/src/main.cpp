@@ -25,10 +25,11 @@ void deplacement(float, bool);
 void tourner(float);
 void tournerSurLui(float);
 float ajustementAngle(float, float);
+int detectionsifflet();
 
 void setup() {
   // put your setup code here, to run once: :')
-
+Serial.begin(9600);
 }
 
 void loop() {
@@ -42,7 +43,7 @@ void deplacement(float d, bool decel)
   int loopCnt = 0;
   int preDecec = 0;
   double pulseTh = 0; //Pulse théorique
-  double lastPulseTh = 0;
+  //double lastPulseTh = 0;
   double speed = NORMAL_SPEED;
 
   int pulsePrLeft = 0; //Pulse pratique
@@ -174,4 +175,17 @@ float ajustementAngle(float angle, float dist)
 {
   float ajustement = angle * CONVERTION_ANGLE;
   return dist - ajustement;
+}
+
+int detectionsifflet()
+{
+
+  //Serial.println(analogRead(A1));
+  //Serial.println(analogRead(A2));
+  int sifflet = analogRead(A1) - analogRead(A0);
+  //Serial.println(sifflet);
+  if(sifflet>50)
+    return 1;
+  else
+    return 0;
 }
