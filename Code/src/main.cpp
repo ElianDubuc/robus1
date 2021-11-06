@@ -26,10 +26,16 @@ void tourner(float);
 void tournerSurLui(float);
 float ajustementAngle(float, float);
 int detectionsifflet();
+void suiveurlignes();
 
 void setup() {
   // put your setup code here, to run once: :')
 Serial.begin(9600);
+Serial.begin(115200);
+  pinMode(lc, INPUT);
+  pinMode(cc, INPUT);
+  pinMode(rc, INPUT);
+  BoardInit();
 }
 
 void loop() {
@@ -189,3 +195,59 @@ int detectionsifflet()
   else
     return 0;
 }
+
+void suiveurlignes() 
+{
+  int lc = 48;
+  int cc = 47;
+  int rc = 46;
+  char lecture[3];
+  lecture[0] = digitalRead(lc);
+  lecture[1] = digitalRead(cc);
+  lecture[2] = digitalRead(rc);
+  sprintf(lecture, " Les valeurs sont de %s, %s et  %s", lecture[0], lecture[1], lecture[2]);     
+ switch (lecture)
+ {
+ case "111":
+  MOTOR_SetSpeed(RIGHT, 0);
+  MOTOR_SetSpeed(LEFT, 0);
+  Serial.println("all");
+   break;
+ case "110":
+  MOTOR_SetSpeed(RIGHT, 0.25);
+  MOTOR_SetSpeed(LEFT, 0);
+  Serial.println("lc, cc");
+   break;
+ case "100":
+  MOTOR_SetSpeed(RIGHT, 0.25);
+  MOTOR_SetSpeed(LEFT, 0);
+  Serial.println("lc");
+   break;
+ case "000":
+  MOTOR_SetSpeed(RIGHT, 0.25);
+  MOTOR_SetSpeed(LEFT, 0.25);
+  Serial.println("none");
+   break;
+ case "001":
+  MOTOR_SetSpeed(RIGHT, 0);
+  MOTOR_SetSpeed(LEFT, 0.25);
+  Serial.println("rc");
+   break;
+ case "010":
+  MOTOR_SetSpeed(RIGHT, 0.25);
+  MOTOR_SetSpeed(LEFT, 0.25);
+  Serial.println("cc");
+   break;
+ case "101" :
+  MOTOR_SetSpeed(RIGHT, 0.25);
+  MOTOR_SetSpeed(LEFT, 0.25);
+  Serial.println("lc, rc");
+   break;
+ case "011" :
+  MOTOR_SetSpeed(RIGHT, 0);
+  MOTOR_SetSpeed(LEFT, 0.25);
+  Serial.println("cc, rc");
+   break;
+ }
+}
+
