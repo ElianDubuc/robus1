@@ -21,26 +21,36 @@
 
 #define DIAMETRE_ROBOT 18.6
 
+#define MONTER 1
+#define BAISSER 0
+
 void deplacement(float, bool);
 void tourner(float);
 void tournerSurLui(float);
-float ajustementAngle(float, float);
 int detectionsifflet();
 void suiveurlignes();
+void capteurIR();
+void brasBallon(int);
 
 void setup() {
   // put your setup code here, to run once: :')
 Serial.begin(9600);
 Serial.begin(115200);
-  pinMode(lc, INPUT);
+  /*pinMode(lc, INPUT);
   pinMode(cc, INPUT);
-  pinMode(rc, INPUT);
+  pinMode(rc, INPUT);*/
   BoardInit();
+  brasBallon(MONTER);
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
   //Serial.print(ENCODER_Read(0));
+  //Serial.println(detectionsifflet());
+  //detectionsifflet();
+  //suiveurlignes();
+  
+  delay(1000);
 }
 
 void deplacement(float d, bool decel)
@@ -177,17 +187,11 @@ void tournerSurLui(float angle)
   }
 }
 
-float ajustementAngle(float angle, float dist)
-{
-  float ajustement = angle * CONVERTION_ANGLE;
-  return dist - ajustement;
-}
-
 int detectionsifflet()
 {
 
-  //Serial.println(analogRead(A1));
-  //Serial.println(analogRead(A2));
+  Serial.println(analogRead(A0));
+  Serial.println(analogRead(A1));
   int sifflet = analogRead(A1) - analogRead(A0);
   //Serial.println(sifflet);
   if(sifflet>50)
@@ -198,56 +202,115 @@ int detectionsifflet()
 
 void suiveurlignes() 
 {
-  int lc = 48;
-  int cc = 47;
-  int rc = 46;
-  char lecture[3];
-  lecture[0] = digitalRead(lc);
-  lecture[1] = digitalRead(cc);
-  lecture[2] = digitalRead(rc);
-  sprintf(lecture, " Les valeurs sont de %s, %s et  %s", lecture[0], lecture[1], lecture[2]);     
- switch (lecture)
- {
- case "111":
-  MOTOR_SetSpeed(RIGHT, 0);
-  MOTOR_SetSpeed(LEFT, 0);
-  Serial.println("all");
-   break;
- case "110":
-  MOTOR_SetSpeed(RIGHT, 0.25);
-  MOTOR_SetSpeed(LEFT, 0);
-  Serial.println("lc, cc");
-   break;
- case "100":
-  MOTOR_SetSpeed(RIGHT, 0.25);
-  MOTOR_SetSpeed(LEFT, 0);
-  Serial.println("lc");
-   break;
- case "000":
-  MOTOR_SetSpeed(RIGHT, 0.25);
-  MOTOR_SetSpeed(LEFT, 0.25);
-  Serial.println("none");
-   break;
- case "001":
-  MOTOR_SetSpeed(RIGHT, 0);
-  MOTOR_SetSpeed(LEFT, 0.25);
-  Serial.println("rc");
-   break;
- case "010":
-  MOTOR_SetSpeed(RIGHT, 0.25);
-  MOTOR_SetSpeed(LEFT, 0.25);
-  Serial.println("cc");
-   break;
- case "101" :
-  MOTOR_SetSpeed(RIGHT, 0.25);
-  MOTOR_SetSpeed(LEFT, 0.25);
-  Serial.println("lc, rc");
-   break;
- case "011" :
-  MOTOR_SetSpeed(RIGHT, 0);
-  MOTOR_SetSpeed(LEFT, 0.25);
-  Serial.println("cc, rc");
-   break;
- }
+  int ls = 48;
+  int cs = 47;
+  int rs = 46;
+  bool goToColorSample = false;
+  float const SPEED_LINE = 0.25;
+  float const ACCEL_LINE = 0.40;
+  int trame = 0;
+  trame = digitalRead(ls);
+  trame = (trame << 1) + digitalRead(cs);
+  trame = (trame << 1) + digitalRead(rs);
+  Serial.println(trame);
+  switch (trame)
+  {
+  case 1: //Ligne sur capteur de droit
+    MOTOR_SetSpeed(RIGHT, SPEED_LINE);
+    MOTOR_SetSpeed(LEFT, ACCEL_LINE);
+    Serial.println("1");
+    break;
+  case 2: //Ligne sur capteur central
+    MOTOR_SetSpeed(RIGHT, SPEED_LINE);
+    MOTOR_SetSpeed(LEFT, SPEED_LINE);
+    Serial.println("2");
+  break;
+  case 3: //Ligne sur capteur central et droit
+    if(goToColorSample == true)
+    {
+      MOTOR_SetSpeed(RIGHT, -SPEED_LINE);
+      MOTOR_SetSpeed(LEFT, SPEED_LINE);
+      Serial.println("3");
+    }
+    break;
+  case 4: //Ligne sur capteur de droite
+    MOTOR_SetSpeed(RIGHT, ACCEL_LINE);
+    MOTOR_SetSpeed(LEFT, SPEED_LINE);
+    Serial.println("4");
+    break;
+  case 5: //Capteur de gauche et droite
+    break;
+  case 6: //Ligne sur capteur central et gauche
+    if(goToColorSample == true)
+    {
+      MOTOR_SetSpeed(RIGHT, SPEED_LINE);
+      MOTOR_SetSpeed(LEFT, -SPEED_LINE);
+      Serial.println("6");
+    }
+    break;
+  case 7: //Ligne sur tout les capteurs
+    if(goToColorSample == true)
+    {
+      MOTOR_SetSpeed(RIGHT, 0);
+      MOTOR_SetSpeed(LEFT, 0);
+      Serial.println("7");
+    }
+    break;
+  case 0: //Aucune ligne captée
+    MOTOR_SetSpeed(RIGHT, SPEED_LINE);
+    MOTOR_SetSpeed(LEFT, SPEED_LINE);
+    Serial.println("0");
+    break;
+  }
 }
 
+//Pas fini
+void capteurIR()
+{
+  float distance1 = ROBUS_ReadIR(0);
+  float distance2 = ROBUS_ReadIR(1);
+
+  
+
+  //Allume del vert
+  if(distance1 < 500 || distance2 < 500) //Quille détectée
+  {
+    digitalWrite(33, HIGH);
+    if(distance1 < 500)
+    {
+      while(distance2 > 500)
+      {
+        MOTOR_SetSpeed(RIGHT, 0.4);
+        MOTOR_SetSpeed(LEFT, -0.4);
+      }
+      MOTOR_SetSpeed(RIGHT, 0);
+      MOTOR_SetSpeed(LEFT, 0);
+    }
+  }
+  else if(distance1 > 500 || distance2 > 500) //Quille non détectée
+  {
+    digitalWrite(33, LOW);
+  }
+}
+
+void brasBallon(int directive)
+{
+  SERVO_Enable(SERVO_1);
+  SERVO_Enable(SERVO_2);
+
+  //Moteurs ne font pas la bonne chose
+  if(directive == MONTER)
+  {
+    SERVO_SetAngle(SERVO_1, 40);
+    SERVO_SetAngle(SERVO_2, 40);
+  }
+  else if(directive == BAISSER)
+  {
+    SERVO_SetAngle(SERVO_1, -90);
+    SERVO_SetAngle(SERVO_2, -90);
+  }
+
+  delay(800);
+  SERVO_Disable(SERVO_1);
+  SERVO_Disable(SERVO_2);
+}
