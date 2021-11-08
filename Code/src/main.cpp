@@ -28,16 +28,31 @@ void tourner(float);
 void tournerSurLui(float);
 float ajustementAngle(float, float);
 int detectionsifflet();
-void suiveurlignes();
+void suiveurLignes();
+
+//---Variables du suiveur de ligne---
+//Variables des pins
+int ls = 48;
+int cs = 47;
+int rs = 46;
+int lineS = 49;
+//Étape de scan de couleur/quille
+bool goToQuille = false;
+bool goToColorSample = false;
+float const SPEED_LINE = 0.25;
+//-----------------------------------
 
 void setup() {
   // put your setup code here, to run once: :')
-Serial.begin(9600);
-/*Serial.begin(115200);
+  //Serial.begin(9600);
+  Serial.begin(115200);
+  //---Déclaration des pins pour les capteurs de ligne---
   pinMode(lc, INPUT);
   pinMode(cc, INPUT);
   pinMode(rc, INPUT);
-  BoardInit();*/
+  pinMode(lineS, INPUT);
+  //-----------------------------------------------------
+  BoardInit();
 }
 
 void loop() {
@@ -198,58 +213,78 @@ int detectionsifflet()
     return 0;
 }
 
-/*void suiveurlignes() 
+void suiveurLignes()
 {
-  int lc = 48;
-  int cc = 47;
-  int rc = 46;
-  char lecture[3];
-  lecture[0] = digitalRead(lc);
-  lecture[1] = digitalRead(cc);
-  lecture[2] = digitalRead(rc);
-  sprintf(lecture, " Les valeurs sont de %s, %s et  %s", lecture[0], lecture[1], lecture[2]);     
- switch (lecture)
- {
- case "111":
-  MOTOR_SetSpeed(RIGHT, 0);
-  MOTOR_SetSpeed(LEFT, 0);
-  Serial.println("all");
-   break;
- case "110":
-  MOTOR_SetSpeed(RIGHT, 0.25);
-  MOTOR_SetSpeed(LEFT, 0);
-  Serial.println("lc, cc");
-   break;
- case "100":
-  MOTOR_SetSpeed(RIGHT, 0.25);
-  MOTOR_SetSpeed(LEFT, 0);
-  Serial.println("lc");
-   break;
- case "000":
-  MOTOR_SetSpeed(RIGHT, 0.25);
-  MOTOR_SetSpeed(LEFT, 0.25);
-  Serial.println("none");
-   break;
- case "001":
-  MOTOR_SetSpeed(RIGHT, 0);
-  MOTOR_SetSpeed(LEFT, 0.25);
-  Serial.println("rc");
-   break;
- case "010":
-  MOTOR_SetSpeed(RIGHT, 0.25);
-  MOTOR_SetSpeed(LEFT, 0.25);
-  Serial.println("cc");
-   break;
- case "101" :
-  MOTOR_SetSpeed(RIGHT, 0.25);
-  MOTOR_SetSpeed(LEFT, 0.25);
-  Serial.println("lc, rc");
-   break;
- case "011" :
-  MOTOR_SetSpeed(RIGHT, 0);
-  MOTOR_SetSpeed(LEFT, 0.25);
-  Serial.println("cc, rc");
-   break;
- }
-}*/
-
+  int trame = 0;
+  trame = digitalRead(lineS);
+  trame = (trame << 1) + digitalRead(ls);
+  trame = (trame << 1) + digitalRead(cs);
+  trame = (trame << 1) + digitalRead(rs);
+  Serial.println(trame);
+  if(ROBUS_IsBumper(3)) //Bumper est temporaire, à remplacer par le capteur de son
+  {
+    goToQuille = true;
+    if(ROBUS_IsBumper(3) && goToQuille == true)
+    {
+      goToColorSample = true;
+    }    
+  }
+  switch (trame)
+  {
+  case 0: //Aucune ligne captée
+    MOTOR_SetSpeed(RIGHT, SPEED_LINE);
+    MOTOR_SetSpeed(LEFT, SPEED_LINE);
+    break;
+  case 1: //Ligne sur capteur de droit
+    MOTOR_SetSpeed(RIGHT, -SPEED_LINE);
+    MOTOR_SetSpeed(LEFT, SPEED_LINE);
+    break;
+  case 2: //Ligne sur capteur central
+    MOTOR_SetSpeed(RIGHT, SPEED_LINE);
+    MOTOR_SetSpeed(LEFT, SPEED_LINE);
+  break;
+  case 3: //Ligne sur capteur central et droit
+    MOTOR_SetSpeed(RIGHT, -SPEED_LINE);
+    MOTOR_SetSpeed(LEFT, SPEED_LINE);
+    break;
+  case 4: //Ligne sur capteur de droite
+    MOTOR_SetSpeed(RIGHT, SPEED_LINE);
+    MOTOR_SetSpeed(LEFT, -SPEED_LINE);
+    break;
+  case 6: //Ligne sur capteur central et gauche
+    MOTOR_SetSpeed(RIGHT, SPEED_LINE);
+    MOTOR_SetSpeed(LEFT, -SPEED_LINE);
+    break;
+  case 8: //Condition pour tourner à droite pour scan de couleur
+    if(goToColorSample == true)
+    {
+      MOTOR_SetSpeed(RIGHT, SPEED_LINE);
+      MOTOR_SetSpeed(LEFT, -SPEED_LINE);
+    }
+  break;
+  case 12: //Condition pour tourner à droite pour scan de couleur
+    if(goToColorSample == true)
+    {
+      MOTOR_SetSpeed(RIGHT, SPEED_LINE);
+      MOTOR_SetSpeed(LEFT, -SPEED_LINE);
+    }
+    break;
+  case 15: //Condition pour tourner à droite pour scan de couleur
+    if(goToColorSample == true)
+    {
+      MOTOR_SetSpeed(RIGHT, SPEED_LINE);
+      MOTOR_SetSpeed(LEFT, -SPEED_LINE);
+    }
+    break;
+  case 17: //Ligne sur tous les capteurs, arrêt
+  if(goToColorSample == true)
+    {
+      MOTOR_SetSpeed(RIGHT, 0);
+      MOTOR_SetSpeed(LEFT, 0);
+    }
+    break;
+  default:
+    Serial.println(" ");
+    break;
+  }
+}
