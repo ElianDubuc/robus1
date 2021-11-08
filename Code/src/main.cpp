@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <LibRobus.h>
 #include <math.h>
+#include <Wire.h>
+#include "Adafruit_TCS34725.h"
 
 #define PULSES_PAR_TOUR 3200
 #define PULSES_PAR_SEC 15000 //7025
@@ -31,11 +33,11 @@ void suiveurlignes();
 void setup() {
   // put your setup code here, to run once: :')
 Serial.begin(9600);
-Serial.begin(115200);
+/*Serial.begin(115200);
   pinMode(lc, INPUT);
   pinMode(cc, INPUT);
   pinMode(rc, INPUT);
-  BoardInit();
+  BoardInit();*/
 }
 
 void loop() {
@@ -196,7 +198,7 @@ int detectionsifflet()
     return 0;
 }
 
-void suiveurlignes() 
+/*void suiveurlignes() 
 {
   int lc = 48;
   int cc = 47;
@@ -249,5 +251,5 @@ void suiveurlignes()
   Serial.println("cc, rc");
    break;
  }
-}
+}*/
 
