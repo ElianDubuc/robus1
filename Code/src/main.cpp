@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <LibRobus.h>
 #include <math.h>
+#include <Wire.h>
+#include "Adafruit_TCS34725.h"
 
 #define PULSES_PAR_TOUR 3200
 #define PULSES_PAR_SEC 15000 //7025
@@ -28,17 +30,30 @@ void deplacement(float, bool);
 void tourner(float);
 void tournerSurLui(float);
 int detectionsifflet();
-void suiveurlignes();
-void capteurIR();
-void brasBallon(int);
+void suiveurLignes();
+
+//---Variables du suiveur de ligne---
+//Variables des pins
+int ls = 48;
+int cs = 47;
+int rs = 46;
+int lineS = 49;
+//Étape de scan de couleur/quille
+bool goToQuille = false;
+bool goToColorSample = false;
+float const SPEED_LINE = 0.25;
+//-----------------------------------
 
 void setup() {
   // put your setup code here, to run once: :')
-Serial.begin(9600);
-Serial.begin(115200);
-  /*pinMode(lc, INPUT);
+  //Serial.begin(9600);
+  Serial.begin(115200);
+  //---Déclaration des pins pour les capteurs de ligne---
+  pinMode(lc, INPUT);
   pinMode(cc, INPUT);
-  pinMode(rc, INPUT);*/
+  pinMode(rc, INPUT);
+  pinMode(lineS, INPUT);
+  //-----------------------------------------------------
   BoardInit();
   brasBallon(MONTER);
 }
@@ -200,117 +215,78 @@ int detectionsifflet()
     return 0;
 }
 
-void suiveurlignes() 
+void suiveurLignes()
 {
-  int ls = 48;
-  int cs = 47;
-  int rs = 46;
-  bool goToColorSample = false;
-  float const SPEED_LINE = 0.25;
-  float const ACCEL_LINE = 0.40;
   int trame = 0;
-  trame = digitalRead(ls);
+  trame = digitalRead(lineS);
+  trame = (trame << 1) + digitalRead(ls);
   trame = (trame << 1) + digitalRead(cs);
   trame = (trame << 1) + digitalRead(rs);
   Serial.println(trame);
+  if(ROBUS_IsBumper(3)) //Bumper est temporaire, à remplacer par le capteur de son
+  {
+    goToQuille = true;
+    if(ROBUS_IsBumper(3) && goToQuille == true)
+    {
+      goToColorSample = true;
+    }    
+  }
   switch (trame)
   {
-  case 1: //Ligne sur capteur de droit
+  case 0: //Aucune ligne captée
     MOTOR_SetSpeed(RIGHT, SPEED_LINE);
-    MOTOR_SetSpeed(LEFT, ACCEL_LINE);
-    Serial.println("1");
+    MOTOR_SetSpeed(LEFT, SPEED_LINE);
+    break;
+  case 1: //Ligne sur capteur de droit
+    MOTOR_SetSpeed(RIGHT, -SPEED_LINE);
+    MOTOR_SetSpeed(LEFT, SPEED_LINE);
     break;
   case 2: //Ligne sur capteur central
     MOTOR_SetSpeed(RIGHT, SPEED_LINE);
     MOTOR_SetSpeed(LEFT, SPEED_LINE);
-    Serial.println("2");
   break;
   case 3: //Ligne sur capteur central et droit
-    if(goToColorSample == true)
-    {
-      MOTOR_SetSpeed(RIGHT, -SPEED_LINE);
-      MOTOR_SetSpeed(LEFT, SPEED_LINE);
-      Serial.println("3");
-    }
+    MOTOR_SetSpeed(RIGHT, -SPEED_LINE);
+    MOTOR_SetSpeed(LEFT, SPEED_LINE);
     break;
   case 4: //Ligne sur capteur de droite
-    MOTOR_SetSpeed(RIGHT, ACCEL_LINE);
-    MOTOR_SetSpeed(LEFT, SPEED_LINE);
-    Serial.println("4");
-    break;
-  case 5: //Capteur de gauche et droite
+    MOTOR_SetSpeed(RIGHT, SPEED_LINE);
+    MOTOR_SetSpeed(LEFT, -SPEED_LINE);
     break;
   case 6: //Ligne sur capteur central et gauche
+    MOTOR_SetSpeed(RIGHT, SPEED_LINE);
+    MOTOR_SetSpeed(LEFT, -SPEED_LINE);
+    break;
+  case 8: //Condition pour tourner à droite pour scan de couleur
     if(goToColorSample == true)
     {
       MOTOR_SetSpeed(RIGHT, SPEED_LINE);
       MOTOR_SetSpeed(LEFT, -SPEED_LINE);
-      Serial.println("6");
     }
-    break;
-  case 7: //Ligne sur tout les capteurs
+  break;
+  case 12: //Condition pour tourner à droite pour scan de couleur
     if(goToColorSample == true)
     {
-      MOTOR_SetSpeed(RIGHT, 0);
-      MOTOR_SetSpeed(LEFT, 0);
-      Serial.println("7");
+      MOTOR_SetSpeed(RIGHT, SPEED_LINE);
+      MOTOR_SetSpeed(LEFT, -SPEED_LINE);
     }
     break;
-  case 0: //Aucune ligne captée
-    MOTOR_SetSpeed(RIGHT, SPEED_LINE);
-    MOTOR_SetSpeed(LEFT, SPEED_LINE);
-    Serial.println("0");
-    break;
-  }
-}
-
-//Pas fini
-void capteurIR()
-{
-  float distance1 = ROBUS_ReadIR(0);
-  float distance2 = ROBUS_ReadIR(1);
-
-  
-
-  //Allume del vert
-  if(distance1 < 500 || distance2 < 500) //Quille détectée
-  {
-    digitalWrite(33, HIGH);
-    if(distance1 < 500)
+  case 15: //Condition pour tourner à droite pour scan de couleur
+    if(goToColorSample == true)
     {
-      while(distance2 > 500)
-      {
-        MOTOR_SetSpeed(RIGHT, 0.4);
-        MOTOR_SetSpeed(LEFT, -0.4);
-      }
+      MOTOR_SetSpeed(RIGHT, SPEED_LINE);
+      MOTOR_SetSpeed(LEFT, -SPEED_LINE);
+    }
+    break;
+  case 17: //Ligne sur tous les capteurs, arrêt
+  if(goToColorSample == true)
+    {
       MOTOR_SetSpeed(RIGHT, 0);
       MOTOR_SetSpeed(LEFT, 0);
     }
+    break;
+  default:
+    Serial.println(" ");
+    break;
   }
-  else if(distance1 > 500 || distance2 > 500) //Quille non détectée
-  {
-    digitalWrite(33, LOW);
-  }
-}
-
-void brasBallon(int directive)
-{
-  SERVO_Enable(SERVO_1);
-  SERVO_Enable(SERVO_2);
-
-  //Moteurs ne font pas la bonne chose
-  if(directive == MONTER)
-  {
-    SERVO_SetAngle(SERVO_1, 40);
-    SERVO_SetAngle(SERVO_2, 40);
-  }
-  else if(directive == BAISSER)
-  {
-    SERVO_SetAngle(SERVO_1, -90);
-    SERVO_SetAngle(SERVO_2, -90);
-  }
-
-  delay(800);
-  SERVO_Disable(SERVO_1);
-  SERVO_Disable(SERVO_2);
 }
