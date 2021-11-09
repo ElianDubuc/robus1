@@ -31,6 +31,7 @@ void tourner(float);
 void tournerSurLui(float);
 int detectionsifflet();
 void suiveurLignes();
+void capteurIR();
 
 //---Variables du suiveur de ligne---
 //Variables des pins
@@ -49,13 +50,9 @@ void setup() {
   //Serial.begin(9600);
   Serial.begin(115200);
   //---Déclaration des pins pour les capteurs de ligne---
-  pinMode(lc, INPUT);
-  pinMode(cc, INPUT);
-  pinMode(rc, INPUT);
   pinMode(lineS, INPUT);
   //-----------------------------------------------------
   BoardInit();
-  brasBallon(MONTER);
 }
 
 void loop() {
@@ -64,7 +61,7 @@ void loop() {
   //Serial.println(detectionsifflet());
   //detectionsifflet();
   //suiveurlignes();
-  
+  capteurIR();
   delay(1000);
 }
 
@@ -205,10 +202,10 @@ void tournerSurLui(float angle)
 int detectionsifflet()
 {
 
-  Serial.println(analogRead(A0));
-  Serial.println(analogRead(A1));
+  //Serial.println(analogRead(A0));
+  //Serial.println(analogRead(A1));
   int sifflet = analogRead(A1) - analogRead(A0);
-  //Serial.println(sifflet);
+  Serial.println(sifflet);
   if(sifflet>50)
     return 1;
   else
@@ -289,4 +286,30 @@ void suiveurLignes()
     Serial.println(" ");
     break;
   }
+}
+
+void capteurIR()
+{
+  float capteur0 = ROBUS_ReadIR(0);
+  float capteur1 = ROBUS_ReadIR(1);
+  bool capt = false;
+
+  Serial.println(capteur0);
+  //Serial.println(capteur1);
+  /*if(capteur0 < 380 && capteur0 > 320)
+  {
+    while(capt == false)
+    {
+      MOTOR_SetSpeed(0, -0.1);
+      MOTOR_SetSpeed(1, 0.1);
+
+      if(capteur1 < 380 && capteur1 > 320)
+      {
+        //Serial.println();
+        capt = true;
+      }
+    }
+    MOTOR_SetSpeed(0, 0);
+    MOTOR_SetSpeed(1, 0);
+  }*/
 }
