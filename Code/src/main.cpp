@@ -49,13 +49,13 @@ void setup() {
   //Serial.begin(9600);
   Serial.begin(115200);
   //---Déclaration des pins pour les capteurs de ligne---
-  pinMode(lc, INPUT);
-  pinMode(cc, INPUT);
-  pinMode(rc, INPUT);
+  pinMode(ls, INPUT);
+  pinMode(cs, INPUT);
+  pinMode(rs, INPUT);
   pinMode(lineS, INPUT);
   //-----------------------------------------------------
   BoardInit();
-  brasBallon(MONTER);
+  //brasBallon(MONTER);
 }
 
 void loop() {
