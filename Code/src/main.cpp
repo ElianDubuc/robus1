@@ -50,16 +50,21 @@ void setup() {
   //Serial.begin(9600);
   Serial.begin(115200);
   //---Déclaration des pins pour les capteurs de ligne---
+  pinMode(ls, INPUT);
+  pinMode(cs, INPUT);
+  pinMode(rs, INPUT);
   pinMode(lineS, INPUT);
   //-----------------------------------------------------
   BoardInit();
+  //brasBallon(MONTER);
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
   //Serial.print(ENCODER_Read(0));
   //Serial.println(detectionsifflet());
-  //detectionsifflet();
+  //if(detectionsifflet())
+  //  Serial.println("Sifflet");
   //suiveurlignes();
   capteurIR();
   delay(1000);
@@ -201,11 +206,13 @@ void tournerSurLui(float angle)
 
 int detectionsifflet()
 {
-
-  //Serial.println(analogRead(A0));
-  //Serial.println(analogRead(A1));
+  /*Serial.print("\nSignal: ");
+  Serial.print(analogRead(A1));
+  Serial.print(" Bruit ambiant: ");
+  Serial.print(analogRead(A0));*/
   int sifflet = analogRead(A1) - analogRead(A0);
-  Serial.println(sifflet);
+  //Serial.print(" Delta: ");
+  //Serial.print(sifflet);
   if(sifflet>50)
     return 1;
   else

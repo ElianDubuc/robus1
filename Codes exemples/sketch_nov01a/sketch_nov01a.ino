@@ -1,6 +1,6 @@
 // defines pins numbers
-const int trigPin = 9;
-const int echoPin = 10;
+const int trigPin = 23;
+const int echoPin = 22;
 // defines variables
 long duration;
 int distance;
