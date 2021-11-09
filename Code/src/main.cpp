@@ -6,7 +6,7 @@
 #include "Adafruit_TCS34725.h"
 
 #define PULSES_PAR_TOUR 3200
-#define PULSES_PAR_SEC 15000 //7025
+#define PULSES_PAR_SEC 10000 //7025
 #define DELAY_LOOP 50
 #define VITESSE_DEPART 0.2
 
@@ -32,6 +32,8 @@ void tournerSurLui(float);
 int detectionsifflet();
 void suiveurLignes();
 void capteurIR();
+void detectionQuille();
+int capteurSonor();
 
 //---Variables du suiveur de ligne---
 //Variables des pins
@@ -39,14 +41,27 @@ int ls = 48;
 int cs = 47;
 int rs = 46;
 int lineS = 49;
+int ledVerte = 37;
 //Étape de scan de couleur/quille
 bool goToQuille = false;
 bool goToColorSample = false;
 float const SPEED_LINE = 0.25;
+// defines pins numbers
+const int trigPin = 23;
+const int echoPin = 22;
+// defines variables
+long duration;
+//int distance;
+
+//Variable loop
+int etat = 1;
 //-----------------------------------
 
 void setup() {
   // put your setup code here, to run once: :')
+  //Serial.begin(9600);
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
   //Serial.begin(9600);
   Serial.begin(115200);
   //---Déclaration des pins pour les capteurs de ligne---
@@ -55,6 +70,7 @@ void setup() {
   pinMode(rs, INPUT);
   pinMode(lineS, INPUT);
   //-----------------------------------------------------
+  pinMode(ledVerte, OUTPUT);
   BoardInit();
   //brasBallon(MONTER);
 }
@@ -66,8 +82,34 @@ void loop() {
   //if(detectionsifflet())
   //  Serial.println("Sifflet");
   //suiveurlignes();
-  capteurIR();
-  delay(1000);
+  //capteurIR();
+  detectionQuille();
+  //capteurSonor();
+  delay(100);
+
+  /*switch (etat)
+  {
+  case 1:
+    if(detectionsifflet() == 1)
+    {
+      etat = 2;
+      break;
+    }
+    while(detectionsifflet() != 1)
+    {
+      suiveurLignes();
+    }
+    break;
+  
+  case 2:
+    detectionQuille();
+    break;
+  case 3:
+
+    break;
+  default:
+    break;
+  }*/
 }
 
 void deplacement(float d, bool decel)
@@ -141,7 +183,7 @@ void deplacement(float d, bool decel)
       preDecec = loopCnt;
     }
 
-    Serial.print(loopCnt); Serial.print("\tThéorique: "); Serial.print(pulseTh); Serial.print("\tPratique G: "); Serial.print(pulsePrLeft); Serial.print("\tPratique D: "); Serial.print(pulsePrRight);Serial.print("\tV Mot G: "); Serial.print(VITESSE_DEPART + diffLeft*KI); Serial.print("\tV Mot D: "); Serial.print(VITESSE_DEPART + diffRight*KI); Serial.print("\tKP Left : "); Serial.print(KPDiffLeft);Serial.print("\tKP Right : "); Serial.println(KPDiffRight);
+    //Serial.print(loopCnt); Serial.print("\tThéorique: "); Serial.print(pulseTh); Serial.print("\tPratique G: "); Serial.print(pulsePrLeft); Serial.print("\tPratique D: "); Serial.print(pulsePrRight);Serial.print("\tV Mot G: "); Serial.print(VITESSE_DEPART + diffLeft*KI); Serial.print("\tV Mot D: "); Serial.print(VITESSE_DEPART + diffRight*KI); Serial.print("\tKP Left : "); Serial.print(KPDiffLeft);Serial.print("\tKP Right : "); Serial.println(KPDiffRight);
     delay(DELAY_LOOP);
     loopCnt++;
   }
@@ -226,7 +268,7 @@ void suiveurLignes()
   trame = (trame << 1) + digitalRead(ls);
   trame = (trame << 1) + digitalRead(cs);
   trame = (trame << 1) + digitalRead(rs);
-  Serial.println(trame);
+  //Serial.println(trame);
   if(ROBUS_IsBumper(3)) //Bumper est temporaire, à remplacer par le capteur de son
   {
     goToQuille = true;
@@ -295,28 +337,48 @@ void suiveurLignes()
   }
 }
 
+void detectionQuille()
+{
+  delay(10);
+  int dist_quille = capteurSonor();
+  if(dist_quille < 80 && dist_quille != 0)
+  {
+    MOTOR_SetSpeed(0,0);
+    MOTOR_SetSpeed(1,0);
+    digitalWrite(ledVerte, HIGH);
+    tourner(90);
+    deplacement(dist_quille, false);
+    digitalWrite(ledVerte, LOW);
+    delay(10000);
+    etat = 3;
+  }
+  else
+  {
+    suiveurLignes();
+  }
+  
+}
+
 void capteurIR()
 {
   float capteur0 = ROBUS_ReadIR(0);
   float capteur1 = ROBUS_ReadIR(1);
-  bool capt = false;
+}
 
-  Serial.println(capteur0);
-  //Serial.println(capteur1);
-  /*if(capteur0 < 380 && capteur0 > 320)
-  {
-    while(capt == false)
-    {
-      MOTOR_SetSpeed(0, -0.1);
-      MOTOR_SetSpeed(1, 0.1);
-
-      if(capteur1 < 380 && capteur1 > 320)
-      {
-        //Serial.println();
-        capt = true;
-      }
-    }
-    MOTOR_SetSpeed(0, 0);
-    MOTOR_SetSpeed(1, 0);
-  }*/
+int capteurSonor()
+{    
+  int distance;
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+  
+  duration = pulseIn(echoPin, HIGH);
+  
+  distance= duration*0.034/2;
+  Serial.print("Distance: ");
+  Serial.println(distance);
+  return distance;
 }
