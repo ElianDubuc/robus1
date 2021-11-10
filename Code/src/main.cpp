@@ -29,6 +29,11 @@
 #define Vmax 0.25
 #define INC 0.08
 
+
+#define BLEU 1;
+#define ROSE 2;
+#define JAUNE 3;
+
 void deplacement(float, bool);
 void tourner(float);
 void tournerSurLui(float);
@@ -61,7 +66,7 @@ int nbMesure = 0;
 int etat = 1;
 bool haveTurned = false;
 //-----------------------------------
-
+Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_50MS, TCS34725_GAIN_4X);
 void setup() {
   // put your setup code here, to run once: :')
   //Serial.begin(9600);
@@ -485,3 +490,32 @@ int capteurSonor()
   Serial.println(distance);
   return distance;
 }
+
+int couleur ()
+{
+   uint16_t clear, red, green, blue;
+   tcs.getRawData(&red, &green, &blue, &clear);
+
+  if(1483<clear>1383 && 403<red>303 && 568<blue>485 &&  525<green>462)
+  {
+    return BLEU;
+  }
+  else if(516<red>416 && 463<green>493 && 528<blue>428 &&  1495<clear>1395)
+  {
+    return ROSE;
+  }
+  else if(548<red>448 && 567<green>467 && 480<blue>380 &&  1590<clear>1500)
+  {
+    return JAUNE;
+  }
+  else;
+
+}
+/*  delay(1000);  // takes 50ms to read
+
+    tcs.getRawData(&red, &green, &blue, &clear);
+    Serial.print("C:\t"); Serial.println(clear);
+    Serial.print("R:\t"); Serial.println(red);
+    Serial.print("G:\t"); Serial.println(green);
+    Serial.print("B:\t"); Serial.println(blue); Serial.print("\n");*/
+
