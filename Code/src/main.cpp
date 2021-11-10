@@ -6,7 +6,7 @@
 #include "Adafruit_TCS34725.h"
 
 #define PULSES_PAR_TOUR 3200
-#define PULSES_PAR_SEC 10000 //7025
+#define PULSES_PAR_SEC 5000 //7025
 #define DELAY_LOOP 50
 #define VITESSE_DEPART 0.2
 
@@ -26,35 +26,39 @@
 #define MONTER 1
 #define BAISSER 0
 
+#define Vmax 0.25
+#define INC 0.08
+
 void deplacement(float, bool);
 void tourner(float);
 void tournerSurLui(float);
 int detectionsifflet();
-void suiveurLignes();
+void suiveurLignes(bool);
 void capteurIR();
 void detectionQuille();
 int capteurSonor();
 
 //---Variables du suiveur de ligne---
 //Variables des pins
-int ls = 48;
-int cs = 47;
-int rs = 46;
-int lineS = 49;
+int ls = 45;
+int cs = 46;
+int rs = 47;
+int lineS = 48;
 int ledVerte = 37;
-//Étape de scan de couleur/quille
-bool goToQuille = false;
-bool goToColorSample = false;
 float const SPEED_LINE = 0.25;
 // defines pins numbers
 const int trigPin = 23;
 const int echoPin = 22;
 // defines variables
 long duration;
+float VLeft = 0;
+float Vright = 0;
+int nbMesure = 0;
 //int distance;
 
 //Variable loop
 int etat = 1;
+bool haveTurned = false;
 //-----------------------------------
 
 void setup() {
@@ -72,6 +76,11 @@ void setup() {
   //-----------------------------------------------------
   pinMode(ledVerte, OUTPUT);
   BoardInit();
+  SERVO_Enable(0);//Active les deux moteurs avec les ressources de la librairie
+  SERVO_Enable(1);
+  SERVO_SetAngle(0,  125);//Position haute pour les deux moteurs
+  SERVO_SetAngle(1, 75);
+
   //brasBallon(MONTER);
 }
 
@@ -81,11 +90,22 @@ void loop() {
   //Serial.println(detectionsifflet());
   //if(detectionsifflet())
   //  Serial.println("Sifflet");
-  //suiveurlignes();
+  Serial.print(digitalRead(lineS));
+  Serial.print(digitalRead(ls));
+  Serial.print(digitalRead(cs));
+  Serial.println(digitalRead(rs));
+  /*if(ROBUS_IsBumper(3))
+  {
+    suiveurLignes(true);
+  }
+  else
+  {
+    suiveurLignes(false);
+  }*/
   //capteurIR();
   detectionQuille();
   //capteurSonor();
-  delay(100);
+  delay(10);
 
   /*switch (etat)
   {
@@ -261,87 +281,124 @@ int detectionsifflet()
     return 0;
 }
 
-void suiveurLignes()
+void suiveurLignes(bool goToColorSample)
 {
   int trame = 0;
   trame = digitalRead(lineS);
   trame = (trame << 1) + digitalRead(ls);
   trame = (trame << 1) + digitalRead(cs);
   trame = (trame << 1) + digitalRead(rs);
-  //Serial.println(trame);
-  if(ROBUS_IsBumper(3)) //Bumper est temporaire, à remplacer par le capteur de son
-  {
-    goToQuille = true;
-    if(ROBUS_IsBumper(3) && goToQuille == true)
-    {
-      goToColorSample = true;
-    }    
-  }
+  Serial.println(trame);
   switch (trame)
   {
   case 0: //Aucune ligne captée
-    MOTOR_SetSpeed(RIGHT, SPEED_LINE);
-    MOTOR_SetSpeed(LEFT, SPEED_LINE);
+    //MOTOR_SetSpeed(RIGHT, SPEED_LINE);
+    //MOTOR_SetSpeed(LEFT, SPEED_LINE);
+    VLeft += INC;
+    Vright += INC;
     break;
   case 1: //Ligne sur capteur de droit
-    MOTOR_SetSpeed(RIGHT, -SPEED_LINE);
-    MOTOR_SetSpeed(LEFT, SPEED_LINE);
+    //MOTOR_SetSpeed(RIGHT, -SPEED_LINE);
+    //MOTOR_SetSpeed(LEFT, SPEED_LINE);
+    VLeft += INC;
+    Vright -= INC;
     break;
   case 2: //Ligne sur capteur central
-    MOTOR_SetSpeed(RIGHT, SPEED_LINE);
-    MOTOR_SetSpeed(LEFT, SPEED_LINE);
+    //MOTOR_SetSpeed(RIGHT, SPEED_LINE);
+    //MOTOR_SetSpeed(LEFT, SPEED_LINE);
+    VLeft += INC;
+    Vright += INC;
   break;
   case 3: //Ligne sur capteur central et droit
-    MOTOR_SetSpeed(RIGHT, -SPEED_LINE);
-    MOTOR_SetSpeed(LEFT, SPEED_LINE);
+    //MOTOR_SetSpeed(RIGHT, SPEED_LINE);
+    //MOTOR_SetSpeed(LEFT, SPEED_LINE);
+    VLeft += INC;
+    Vright += INC;
     break;
-  case 4: //Ligne sur capteur de droite
-    MOTOR_SetSpeed(RIGHT, SPEED_LINE);
-    MOTOR_SetSpeed(LEFT, -SPEED_LINE);
+  case 4: //Ligne sur capteur de gauche
+    //MOTOR_SetSpeed(RIGHT, SPEED_LINE);
+    //MOTOR_SetSpeed(LEFT, -SPEED_LINE);
+    VLeft -= INC;
+    Vright += INC;
     break;
   case 6: //Ligne sur capteur central et gauche
-    MOTOR_SetSpeed(RIGHT, SPEED_LINE);
-    MOTOR_SetSpeed(LEFT, -SPEED_LINE);
+    //MOTOR_SetSpeed(RIGHT, SPEED_LINE);
+    //MOTOR_SetSpeed(LEFT, SPEED_LINE);
+    VLeft += INC;
+    Vright += INC;
     break;
-  case 8: //Condition pour tourner à droite pour scan de couleur
-    if(goToColorSample == true)
-    {
-      MOTOR_SetSpeed(RIGHT, SPEED_LINE);
-      MOTOR_SetSpeed(LEFT, -SPEED_LINE);
-    }
   break;
-  case 12: //Condition pour tourner à droite pour scan de couleur
+  case 8 ... 14: //Condition pour tourner à droite pour scan de couleur
     if(goToColorSample == true)
     {
-      MOTOR_SetSpeed(RIGHT, SPEED_LINE);
-      MOTOR_SetSpeed(LEFT, -SPEED_LINE);
+      if(haveTurned == false)
+      {
+        MOTOR_SetSpeed(RIGHT, 0);
+        MOTOR_SetSpeed(LEFT, 0);
+        tourner(-90);
+        deplacement(5, false);
+        haveTurned = true;
+      }
+      else
+      {
+        MOTOR_SetSpeed(RIGHT, SPEED_LINE);
+        MOTOR_SetSpeed(LEFT, -SPEED_LINE);
+      }
     }
     break;
-  case 15: //Condition pour tourner à droite pour scan de couleur
-    if(goToColorSample == true)
+    case 15:
     {
-      MOTOR_SetSpeed(RIGHT, SPEED_LINE);
-      MOTOR_SetSpeed(LEFT, -SPEED_LINE);
+      if(haveTurned == false)
+      {
+        MOTOR_SetSpeed(RIGHT, 0);
+        MOTOR_SetSpeed(LEFT, 0);
+        tourner(-90);
+        deplacement(5, false);
+        haveTurned = true;
+      }
+      else
+      {
+        MOTOR_SetSpeed(RIGHT, 0);
+        MOTOR_SetSpeed(LEFT, 0);
+        Serial.println("a l'aide");
+        delay(3000);
+      }
     }
-    break;
-  case 17: //Ligne sur tous les capteurs, arrêt
-  if(goToColorSample == true)
-    {
-      MOTOR_SetSpeed(RIGHT, 0);
-      MOTOR_SetSpeed(LEFT, 0);
-    }
-    break;
   default:
     Serial.println(" ");
     break;
   }
+
+    if(VLeft > 0.25){
+      VLeft = 0.25;
+    }
+    if(Vright > 0.25){
+      Vright = 0.25;
+    }
+    if(VLeft < -0.25){
+      VLeft = -0.25;
+    }
+    if(Vright < -0.25){
+      Vright = -0.25;
+    }
+    MOTOR_SetSpeed(RIGHT, Vright);
+    MOTOR_SetSpeed(LEFT, VLeft);
 }
 
 void detectionQuille()
 {
-  delay(10);
   int dist_quille = capteurSonor();
-  if(dist_quille < 80 && dist_quille != 0)
+  if(dist_quille < 40 && dist_quille > 5 && dist_quille != 0)
+  {
+    nbMesure++;
+  }
+  else
+  {
+    suiveurLignes(false);
+    nbMesure = 0;
+  }
+
+  if (nbMesure >= 2)
   {
     MOTOR_SetSpeed(0,0);
     MOTOR_SetSpeed(1,0);
@@ -349,13 +406,13 @@ void detectionQuille()
     tourner(90);
     deplacement(dist_quille, false);
     digitalWrite(ledVerte, LOW);
-    delay(10000);
+    tournerSurLui(180);
+    deplacement(dist_quille*0.95, true);
+    tourner(90);
+    delay(1000);
     etat = 3;
   }
-  else
-  {
-    suiveurLignes();
-  }
+  
   
 }
 
