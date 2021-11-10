@@ -5,6 +5,8 @@
 #include <Wire.h>
 #include "Adafruit_TCS34725.h"
 
+Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_50MS, TCS34725_GAIN_4X);
+
 #define PULSES_PAR_TOUR 3200
 #define PULSES_PAR_SEC 5000 //7025
 #define DELAY_LOOP 50
