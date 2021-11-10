@@ -37,6 +37,7 @@ void suiveurLignes(bool);
 void capteurIR();
 void detectionQuille();
 int capteurSonor();
+int detectquille();
 
 //---Variables du suiveur de ligne---
 //Variables des pins
@@ -85,6 +86,10 @@ void setup() {
 }
 
 void loop() {
+
+  detectquille();
+  //Serial.print(" Capteur 1: ");
+  //Serial.println(capteur1);
   // put your main code here, to run repeatedly:
   //Serial.print(ENCODER_Read(0));
   //Serial.println(detectionsifflet());
@@ -103,7 +108,7 @@ void loop() {
     suiveurLignes(false);
   }*/
   //capteurIR();
-  detectionQuille();
+  //detectionQuille();
   //capteurSonor();
   delay(10);
 
@@ -385,6 +390,33 @@ void suiveurLignes(bool goToColorSample)
     MOTOR_SetSpeed(LEFT, VLeft);
 }
 
+int detectquille()
+{
+  float capteur0 = ROBUS_ReadIR(0);
+  float capteur1 = ROBUS_ReadIR(1);
+  float capteur, old0, old1, old;
+  int detection = 0;
+
+  while(detection == 0)
+  {
+    old0 = capteur0;
+    old1 = capteur1;
+    old = (old0 + old1)/2;
+    delay(300);
+    capteur0 = ROBUS_ReadIR(0);
+    capteur1 = ROBUS_ReadIR(1);
+    capteur = (capteur0 + capteur1)/2;
+    Serial.println(capteur);
+    if(capteur>old+50)
+      {
+        detection = 1;
+        Serial.println("Quille trouve");
+      }
+  }
+  return 1;
+}
+
+/*
 void detectionQuille()
 {
   int dist_quille = capteurSonor();
@@ -416,11 +448,12 @@ void detectionQuille()
   
 }
 
+
 void capteurIR()
 {
   float capteur0 = ROBUS_ReadIR(0);
   float capteur1 = ROBUS_ReadIR(1);
-}
+}*/
 
 int capteurSonor()
 {    
