@@ -43,6 +43,7 @@ void capteurIR();
 void detectionQuille();
 int capteurSonor();
 int detectquille();
+int couleur();
 
 //---Variables du suiveur de ligne---
 //Variables des pins
@@ -100,10 +101,10 @@ void loop() {
   //Serial.println(detectionsifflet());
   //if(detectionsifflet())
   //  Serial.println("Sifflet");
-  Serial.print(digitalRead(lineS));
-  Serial.print(digitalRead(ls));
-  Serial.print(digitalRead(cs));
-  Serial.println(digitalRead(rs));
+  //Serial.print(digitalRead(lineS));
+  //Serial.print(digitalRead(ls));
+  //Serial.print(digitalRead(cs));
+  //Serial.println(digitalRead(rs));
   /*if(ROBUS_IsBumper(3))
   {
     suiveurLignes(true);
@@ -115,9 +116,11 @@ void loop() {
   //capteurIR();
   //detectionQuille();
   //capteurSonor();
-  delay(10);
+  delay(1000);
 
-  switch (etat)
+  Serial.println(couleur());
+
+  /*switch (etat)
   {
   case 1:
     if(detectionsifflet() == 1)
@@ -152,7 +155,7 @@ void loop() {
     break;
   default:
     break;
-  }
+  }*/
 }
 
 void deplacement(float d, bool decel)
@@ -491,25 +494,31 @@ int capteurSonor()
   return distance;
 }
 
-int couleur ()
+int couleur()
 {
    uint16_t clear, red, green, blue;
    tcs.getRawData(&red, &green, &blue, &clear);
-
-  if(1483<clear>1383 && 403<red>303 && 568<blue>485 &&  525<green>462)
+    Serial.print("C:\t"); Serial.println(clear);
+    Serial.print("R:\t"); Serial.println(red);
+    Serial.print("G:\t"); Serial.println(green);
+    Serial.print("B:\t"); Serial.println(blue); Serial.print("\n");
+  if( 403>red && red>303 && 568>blue && blue>485 &&  525>green && green>440)
   {
+    Serial.print("bleu");
     return BLEU;
   }
-  else if(516<red>416 && 463<green>493 && 528<blue>428 &&  1495<clear>1395)
+  else if(516>red && red>416 && 463>green && green>393 && 528>blue && blue>428  )
   {
     return ROSE;
   }
-  else if(548<red>448 && 567<green>467 && 480<blue>380 &&  1590<clear>1500)
+  else if(548>red && red>448 && 567>green && green>467 && 480>blue && blue>380 )
   {
     return JAUNE;
   }
-  else;
-
+  else
+  {
+    return 0;
+  }
 }
 /*  delay(1000);  // takes 50ms to read
 
