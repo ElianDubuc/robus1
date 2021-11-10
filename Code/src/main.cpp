@@ -87,7 +87,7 @@ void setup() {
 
 void loop() {
 
-  detectquille();
+  //detectquille();
   //Serial.print(" Capteur 1: ");
   //Serial.println(capteur1);
   // put your main code here, to run repeatedly:
@@ -112,7 +112,7 @@ void loop() {
   //capteurSonor();
   delay(10);
 
-  /*switch (etat)
+  switch (etat)
   {
   case 1:
     if(detectionsifflet() == 1)
@@ -120,7 +120,7 @@ void loop() {
       etat = 2;
       break;
     }
-    while(detectionsifflet() != 1)
+    else
     {
       suiveurLignes();
     }
@@ -134,7 +134,7 @@ void loop() {
     break;
   default:
     break;
-  }*/
+  }
 }
 
 void deplacement(float d, bool decel)
@@ -390,7 +390,7 @@ void suiveurLignes(bool goToColorSample)
     MOTOR_SetSpeed(LEFT, VLeft);
 }
 
-int detectquille()
+/*int detectquille()
 {
   float capteur0 = ROBUS_ReadIR(0);
   float capteur1 = ROBUS_ReadIR(1);
@@ -414,9 +414,9 @@ int detectquille()
       }
   }
   return 1;
-}
+}*/
 
-/*
+
 void detectionQuille()
 {
   int dist_quille = capteurSonor();
@@ -453,7 +453,7 @@ void capteurIR()
 {
   float capteur0 = ROBUS_ReadIR(0);
   float capteur1 = ROBUS_ReadIR(1);
-}*/
+}
 
 int capteurSonor()
 {    
