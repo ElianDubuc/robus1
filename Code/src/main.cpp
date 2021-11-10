@@ -122,7 +122,7 @@ void loop() {
     }
     else
     {
-      suiveurLignes();
+      suiveurLignes(false);
     }
     break;
   
@@ -130,7 +130,20 @@ void loop() {
     detectionQuille();
     break;
   case 3:
-
+    suiveurLignes(true);
+    
+    break;
+  case 4:
+    //detectionCouleur();
+    break;
+  case 5:
+    //Va chercher la balle et enlignement corridor
+    break;
+  case 6:
+    //Avance jusqu'au fond du corridor
+    break;
+  case 7:
+    //retourne sur la ligne blanche
     break;
   default:
     break;
@@ -277,7 +290,7 @@ int detectionsifflet()
   Serial.print(analogRead(A1));
   Serial.print(" Bruit ambiant: ");
   Serial.print(analogRead(A0));*/
-  int sifflet = analogRead(A5) - analogRead(A4);
+  int sifflet = analogRead(A1) - analogRead(A0);
   //Serial.print(" Delta: ");
   //Serial.print(sifflet);
   if(sifflet>50)
@@ -415,6 +428,7 @@ void suiveurLignes(bool goToColorSample)
   }
   return 1;
 }*/
+
 
 void detectionQuille()
 {
