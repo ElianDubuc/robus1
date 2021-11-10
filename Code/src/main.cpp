@@ -277,7 +277,7 @@ int detectionsifflet()
   Serial.print(analogRead(A1));
   Serial.print(" Bruit ambiant: ");
   Serial.print(analogRead(A0));*/
-  int sifflet = analogRead(A1) - analogRead(A0);
+  int sifflet = analogRead(A5) - analogRead(A4);
   //Serial.print(" Delta: ");
   //Serial.print(sifflet);
   if(sifflet>50)
@@ -415,7 +415,6 @@ void suiveurLignes(bool goToColorSample)
   }
   return 1;
 }*/
-
 
 void detectionQuille()
 {
