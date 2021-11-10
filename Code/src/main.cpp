@@ -37,7 +37,7 @@ void suiveurLignes(bool);
 void capteurIR();
 void detectionQuille();
 int capteurSonor();
-int detectquille();
+int detectquilleIR();
 
 //---Variables du suiveur de ligne---
 //Variables des pins
@@ -45,7 +45,7 @@ int ls = 45;
 int cs = 46;
 int rs = 47;
 int lineS = 48;
-int ledVerte = 37;
+int ledVerte = 38;
 float const SPEED_LINE = 0.25;
 // defines pins numbers
 const int trigPin = 23;
@@ -61,6 +61,18 @@ int nbMesure = 0;
 int etat = 1;
 bool haveTurned = false;
 //-----------------------------------
+
+enum etats{
+  e_suiveur = 0,
+  e_dect_quille,
+  e_suiveurSortie,
+  e_detectCouleur,
+  e_vaChercher,
+  e_vaPorter,
+  e_retour
+};
+
+
 
 void setup() {
   // put your setup code here, to run once: :')
@@ -87,7 +99,7 @@ void setup() {
 
 void loop() {
 
-  //detectquille();
+  //detectquilleIR();
   //Serial.print(" Capteur 1: ");
   //Serial.println(capteur1);
   // put your main code here, to run repeatedly:
@@ -390,7 +402,7 @@ void suiveurLignes(bool goToColorSample)
     MOTOR_SetSpeed(LEFT, VLeft);
 }
 
-/*int detectquille()
+/*int detectquilleIR()
 {
   float capteur0 = ROBUS_ReadIR(0);
   float capteur1 = ROBUS_ReadIR(1);
