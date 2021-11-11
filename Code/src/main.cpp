@@ -55,7 +55,10 @@ int ls = 45;
 int cs = 46;
 int rs = 47;
 int lineS = 48;
-int ledVerte = 38;
+int ledVerte = 42;
+int ledJaune = 41;
+int ledRouge = 40;
+int ledBleu = 43;
 float const SPEED_LINE = 0.25;
 // defines pins numbers
 const int trigPin = 23;
@@ -98,6 +101,9 @@ void setup() {
   pinMode(lineS, INPUT);
   //-----------------------------------------------------
   pinMode(ledVerte, OUTPUT);
+  pinMode(ledRouge, OUTPUT);
+  pinMode(ledBleu, OUTPUT);
+  pinMode(ledJaune, OUTPUT);
   BoardInit();
   SERVO_Enable(0);//Active les deux moteurs avec les ressources de la librairie
   SERVO_Enable(1);
@@ -105,6 +111,8 @@ void setup() {
   SERVO_SetAngle(1, 75);
 
   //brasBallon(MONTER);
+  
+  etat = 3;
 }
 
 void loop() {
@@ -134,9 +142,10 @@ void loop() {
   //capteurSonor();
   
 
-  Serial.println(detectionsifflet());
-  delay(500);
-  /*switch (etat)
+  //detectionsifflet();
+  //delay(500);
+Serial.print("Mode: ");Serial.println(etat);
+  switch (etat)
   {
   case 1:
     if(detectionsifflet() == 1)
@@ -155,10 +164,9 @@ void loop() {
     break;
   case 3:
     suiveurLignes(true);
-    
     break;
   case 4:
-    //detectionCouleur();
+    Serial.println(couleur());
     break;
   case 5:
     //Va chercher la balle et enlignement corridor
@@ -171,7 +179,7 @@ void loop() {
     break;
   default:
     break;
-  }*/
+  }
 }
 
 void deplacement(float d, bool decel)
@@ -316,9 +324,14 @@ int detectionsifflet()
   Serial.print(analogRead(A0));*/
   int sifflet = analogRead(A1) - analogRead(A0);
   //Serial.print(" Delta: ");
-  //Serial.print(sifflet);
-  if(sifflet>50)
+  Serial.println(sifflet);
+  if(sifflet>0)
+  {
+    digitalWrite(ledRouge, HIGH);
+    digitalWrite(ledJaune, HIGH);
+    digitalWrite(ledBleu, HIGH);
     return 1;
+  }
   else
     return 0;
 }
@@ -330,7 +343,7 @@ void suiveurLignes(bool goToColorSample)
   trame = (trame << 1) + digitalRead(ls);
   trame = (trame << 1) + digitalRead(cs);
   trame = (trame << 1) + digitalRead(rs);
-  Serial.println(trame);
+  //Serial.println(trame);
   switch (trame)
   {
   case 0: //Aucune ligne captée
@@ -377,9 +390,10 @@ void suiveurLignes(bool goToColorSample)
       {
         MOTOR_SetSpeed(RIGHT, 0);
         MOTOR_SetSpeed(LEFT, 0);
-        tourner(-90);
+        tourner(-100);
         deplacement(5, false);
         haveTurned = true;
+        
       }
       else
       {
@@ -390,20 +404,37 @@ void suiveurLignes(bool goToColorSample)
     break;
     case 15:
     {
-      if(haveTurned == false)
+      if(goToColorSample == true)
       {
-        MOTOR_SetSpeed(RIGHT, 0);
-        MOTOR_SetSpeed(LEFT, 0);
-        tourner(-90);
-        deplacement(5, false);
-        haveTurned = true;
-      }
-      else
-      {
-        MOTOR_SetSpeed(RIGHT, 0);
-        MOTOR_SetSpeed(LEFT, 0);
-        Serial.println("a l'aide");
-        delay(3000);
+        if(haveTurned == false)
+        {
+          MOTOR_SetSpeed(RIGHT, 0);
+          MOTOR_SetSpeed(LEFT, 0);
+          tourner(-90);
+          deplacement(5, false);
+          haveTurned = true;
+        }
+        else
+        {
+          MOTOR_SetSpeed(RIGHT, 0);
+          MOTOR_SetSpeed(LEFT, 0);
+          Serial.println("a l'aide");
+          delay(1000);
+          MOTOR_SetSpeed(LEFT, 0.25);
+          MOTOR_SetSpeed(RIGHT, 0.25);
+          do{
+              trame = digitalRead(lineS);
+              trame = (trame << 1) + digitalRead(ls);
+              trame = (trame << 1) + digitalRead(cs);
+              trame = (trame << 1) + digitalRead(rs);
+              Serial.println("testing");
+          }
+          while (trame != 0);
+
+          etat = 4;
+          MOTOR_SetSpeed(LEFT, 0);
+          MOTOR_SetSpeed(RIGHT, 0);
+        }
       }
     }
   default:
@@ -411,17 +442,17 @@ void suiveurLignes(bool goToColorSample)
     break;
   }
 
-    if(VLeft > 0.25){
-      VLeft = 0.25;
+    if(VLeft > Vmax){
+      VLeft = Vmax;
     }
-    if(Vright > 0.25){
-      Vright = 0.25;
+    if(Vright > Vmax){
+      Vright = Vmax;
     }
-    if(VLeft < -0.25){
-      VLeft = -0.25;
+    if(VLeft < -Vmax){
+      VLeft = -Vmax;
     }
-    if(Vright < -0.25){
-      Vright = -0.25;
+    if(Vright < -Vmax){
+      Vright = -Vmax;
     }
     MOTOR_SetSpeed(RIGHT, Vright);
     MOTOR_SetSpeed(LEFT, VLeft);
@@ -512,12 +543,13 @@ int capteurSonor()
 
 int couleur()
 {
+  
    uint16_t clear, red, green, blue;
    tcs.getRawData(&red, &green, &blue, &clear);
-    Serial.print("C:\t"); Serial.println(clear);
+    /*Serial.print("C:\t"); Serial.println(clear);
     Serial.print("R:\t"); Serial.println(red);
     Serial.print("G:\t"); Serial.println(green);
-    Serial.print("B:\t"); Serial.println(blue); Serial.print("\n");
+    Serial.print("B:\t"); Serial.println(blue); Serial.print("\n");*/
   if( 403>red && red>303 && 568>blue && blue>485 &&  525>green && green>440)
   {
     Serial.print("bleu");
