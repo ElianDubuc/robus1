@@ -48,6 +48,7 @@ int capteurSonor();
 int detectquille();
 int couleur();
 void bonerAlerte(int);
+void bing_shilling(int);
 
 //---Variables du suiveur de ligne---
 //Variables des pins
@@ -163,13 +164,21 @@ Serial.print("Mode: ");Serial.println(etat);
     detectionQuille();
     break;
   case 3:
+    digitalWrite(ledRouge, LOW);
+    digitalWrite(ledJaune, LOW);
+    digitalWrite(ledBleu, LOW);
     suiveurLignes(true);
     break;
   case 4:
     Serial.println(couleur());
+    if(couleur() != 0)
+    {
+      bing_shilling(10);
+      etat = 5;
+    }
     break;
   case 5:
-    //Va chercher la balle et enlignement corridor
+    //Va chercher la balle et enlignement corridor   
     break;
   case 6:
     //Avance jusqu'au fond du corridor
@@ -410,6 +419,12 @@ void suiveurLignes(bool goToColorSample)
         {
           MOTOR_SetSpeed(RIGHT, 0);
           MOTOR_SetSpeed(LEFT, 0);
+          delay(500);
+          MOTOR_SetSpeed(RIGHT, -0.2);
+          MOTOR_SetSpeed(LEFT, -0.2);
+          delay(500);
+          MOTOR_SetSpeed(RIGHT, 0);
+          MOTOR_SetSpeed(LEFT, 0);
           tourner(-90);
           deplacement(5, false);
           haveTurned = true;
@@ -456,6 +471,7 @@ void suiveurLignes(bool goToColorSample)
     }
     MOTOR_SetSpeed(RIGHT, Vright);
     MOTOR_SetSpeed(LEFT, VLeft);
+    delay(10);
 }
 
 /*int detectquilleIR()
@@ -543,6 +559,8 @@ int capteurSonor()
 
 int couleur()
 {
+  MOTOR_SetSpeed(RIGHT, 0);
+  MOTOR_SetSpeed(LEFT, 0);
   
    uint16_t clear, red, green, blue;
    tcs.getRawData(&red, &green, &blue, &clear);
@@ -553,14 +571,17 @@ int couleur()
   if( 403>red && red>303 && 568>blue && blue>485 &&  525>green && green>440)
   {
     Serial.print("bleu");
+    digitalWrite(ledBleu, HIGH);
     return BLEU;
   }
   else if(516>red && red>416 && 463>green && green>393 && 528>blue && blue>428  )
   {
+    digitalWrite(ledRouge, HIGH);
     return ROSE;
   }
   else if(548>red && red>448 && 567>green && green>467 && 480>blue && blue>380 )
   {
+    digitalWrite(ledJaune, HIGH);
     return JAUNE;
   }
   else
@@ -592,5 +613,72 @@ void bonerAlerte(int position)
   {
     SERVO_SetAngle(0, 83);
     SERVO_SetAngle(1, 120);
+  }
+}
+
+void bing_shilling(int bing)
+{
+  bool m1, m2;
+  int trame = 0;
+  for (int i = 0; i < bing; i++)
+  {
+    if(i%2 == 0)
+    {
+      MOTOR_SetSpeed(LEFT, -0.15);
+      MOTOR_SetSpeed(RIGHT, -0.15);
+      m1 = m2 = true;
+      while(m1 || m2)
+      {
+        Serial.println("Recule ");
+        trame = digitalRead(lineS);
+        trame = (trame << 1) + digitalRead(ls);
+        trame = (trame << 1) + digitalRead(cs);
+        trame = (trame << 1) + digitalRead(rs);
+        if(digitalRead(ls))
+        {
+          Serial.println("Left ");
+          MOTOR_SetSpeed(LEFT, 0);
+          m1 = false;
+        }
+        if(digitalRead(rs))
+        {
+          Serial.println("Right ");
+          MOTOR_SetSpeed(RIGHT, 0);
+          m2 = false;
+        }
+        delay(50);
+      }
+    }
+    else
+    {
+      MOTOR_SetSpeed(LEFT, 0.15);
+      MOTOR_SetSpeed(RIGHT, 0.15);
+      m1 = m2 = true;
+      while(m1 || m2)
+      {
+        Serial.println("Avance ");
+        trame = digitalRead(lineS);
+        trame = (trame << 1) + digitalRead(ls);
+        trame = (trame << 1) + digitalRead(cs);
+        trame = (trame << 1) + digitalRead(rs);
+        if(!digitalRead(ls))
+        {
+          Serial.println("Left ");
+          MOTOR_SetSpeed(LEFT, 0);
+          m1 = false;
+        }
+        if(!digitalRead(rs))
+        {
+          Serial.println("Right ");
+          MOTOR_SetSpeed(RIGHT, 0);
+          m2 = false;
+        }
+        delay(50);
+      }
+    }
+    
+    MOTOR_SetSpeed(LEFT, 0);
+    MOTOR_SetSpeed(RIGHT, 0);
+    delay(50);
   }
 }
