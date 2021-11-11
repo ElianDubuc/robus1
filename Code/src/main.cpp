@@ -31,6 +31,7 @@ Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_50MS, TCS3472
 
 #define Vmax 0.25
 #define INC 0.08
+#define bingShillingSpeed 0.10
 
 
 #define BLEU 1;
@@ -173,12 +174,15 @@ Serial.print("Mode: ");Serial.println(etat);
     Serial.println(couleur());
     if(couleur() != 0)
     {
-      bing_shilling(10);
+      bing_shilling(8);
       etat = 5;
     }
     break;
   case 5:
-    //Va chercher la balle et enlignement corridor   
+    //Va chercher la balle et enlignement corridor
+    deplacement(5, false);
+    bonerAlerte(BAISSER);
+    etat = 6; 
     break;
   case 6:
     //Avance jusqu'au fond du corridor
@@ -425,7 +429,7 @@ void suiveurLignes(bool goToColorSample)
           delay(500);
           MOTOR_SetSpeed(RIGHT, 0);
           MOTOR_SetSpeed(LEFT, 0);
-          tourner(-90);
+          tourner(-100);
           deplacement(5, false);
           haveTurned = true;
         }
@@ -624,8 +628,8 @@ void bing_shilling(int bing)
   {
     if(i%2 == 0)
     {
-      MOTOR_SetSpeed(LEFT, -0.15);
-      MOTOR_SetSpeed(RIGHT, -0.15);
+      MOTOR_SetSpeed(LEFT, -bingShillingSpeed/bing*(bing-i));
+      MOTOR_SetSpeed(RIGHT, -bingShillingSpeed/bing*(bing-i));
       m1 = m2 = true;
       while(m1 || m2)
       {
@@ -651,8 +655,8 @@ void bing_shilling(int bing)
     }
     else
     {
-      MOTOR_SetSpeed(LEFT, 0.15);
-      MOTOR_SetSpeed(RIGHT, 0.15);
+      MOTOR_SetSpeed(LEFT, bingShillingSpeed/bing*(bing-i));
+      MOTOR_SetSpeed(RIGHT, bingShillingSpeed/bing*(bing-i));
       m1 = m2 = true;
       while(m1 || m2)
       {
