@@ -95,7 +95,6 @@ void setup() {
 
   pinMode(trigPin, OUTPUT);
   pinMode(echoPin, INPUT);
-  //Serial.begin(9600);
   Serial.begin(115200);
   //---Déclaration des pins pour les capteurs de ligne---
   pinMode(ls, INPUT);
@@ -112,7 +111,8 @@ void setup() {
   SERVO_Enable(1);
   SERVO_SetAngle(0,  125);//Position haute pour les deux moteurs
   SERVO_SetAngle(1, 75);
-  etat = 3;
+  delay(1000);
+  etat = 1;
 }
 
 void loop() {
@@ -151,16 +151,22 @@ Serial.print("Mode: ");Serial.println(etat);
     break;
   case 5:
     //Va chercher la balle et enlignement corridor
-    deplacement(5, false);
+    deplacement(7, false);
     bonerAlerte(BAISSER);
-    delay(100);
+    delay(1000);
     colormatter(couleurASeRendre);
+    
+    etat = 7;
     break;
   case 6:
     //Avance jusqu'au fond du corridor
     break;
   case 7:
     //retourne sur la ligne blanche
+    digitalWrite(ledRouge, LOW);
+    digitalWrite(ledJaune, LOW);
+    digitalWrite(ledBleu, LOW);
+    suiveurLignes(true);
     break;
   default:
     break;
@@ -375,7 +381,7 @@ void suiveurLignes(bool goToColorSample)
       {
         MOTOR_SetSpeed(RIGHT, 0);
         MOTOR_SetSpeed(LEFT, 0);
-        tourner(-100);
+        tourner(-110);
         deplacement(5, false);
         haveTurned = true;
         
@@ -508,7 +514,6 @@ void detectionQuille()
   
 }
 
-
 void capteurIR()
 {
   float capteur0 = ROBUS_ReadIR(0);
@@ -583,8 +588,8 @@ void bonerAlerte(int position)
   }
   else if(position == BAISSER)
   {
-    SERVO_SetAngle(0, 65);
-    SERVO_SetAngle(1, 180);
+    SERVO_SetAngle(0, 90);
+    SERVO_SetAngle(1, 150);
   }
   else if(position == MILIEU)
   {
@@ -663,36 +668,56 @@ void bing_shilling(int bing)
  void colormatter(int couleurCaptee)
  {
    delay(50);
-   Serial.println("dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd");
-   Serial.println(couleurCaptee);
+   //Serial.println("dddddddddddddddddddddddddddddddddddddddddddddddddd");
+   //Serial.println(couleurCaptee);
    if(couleurCaptee == BLEU)
    {
      Serial.println("bleu");
-    tournerSurLui(-80);
+    tournerSurLui(-85);
      delay(1000);
-     deplacement(40,true);
+     deplacement(45,true);
      delay(1000);
-     tournerSurLui(95);
+     tournerSurLui(84);
      delay(1000);
-     deplacement(230,true);
-
-
+     deplacement(217,true);
+     delay(1500);
+     bonerAlerte(MONTER);
+     delay(1500);
+     tournerSurLui(170);
+     deplacement(215,true);
+     delay(1000);
+     tournerSurLui(-17);
    }
    else if(couleurCaptee == ROSE)
    {
      Serial.println("rose");
-     deplacement(230,true);
+     tournerSurLui(-1);
+     deplacement(217,true);
+     delay(1500);
+     bonerAlerte(MONTER);
+     delay(1500);
+     tournerSurLui(170);
+     deplacement(215,true);
+     delay(1000);
+     tournerSurLui(-17);
+     deplacement(30, false);
    }
    else if (couleurCaptee == JAUNE)
    {
     Serial.println("Jaune");
-     tournerSurLui(80);
+     tournerSurLui(85);
      delay(1000);
-     deplacement(40,true);
+     deplacement(45,true);
      delay(1000);
-     tournerSurLui(-95);
+     tournerSurLui(-86);
      delay(1000);
-     deplacement(230,true);
+     deplacement(215,true);
+     delay(1500);
+     bonerAlerte(MONTER);
+     delay(1500);
+     tournerSurLui(171);
+     deplacement(220,true);
+     delay(1000);
    }
    Serial.println("Fuck");
  }
