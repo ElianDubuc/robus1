@@ -34,9 +34,9 @@ Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_50MS, TCS3472
 #define bingShillingSpeed 0.10
 
 
-#define BLEU 1;
-#define ROSE 2;
-#define JAUNE 3;
+#define BLEU 1
+#define ROSE 2
+#define JAUNE 3
 
 void deplacement(float, bool);
 void tourner(float);
@@ -50,6 +50,7 @@ int detectquille();
 int couleur();
 void bonerAlerte(int);
 void bing_shilling(int);
+void colormatter();
 
 //---Variables du suiveur de ligne---
 //Variables des pins
@@ -686,3 +687,33 @@ void bing_shilling(int bing)
     delay(50);
   }
 }
+
+ void colormatter()
+ {
+   if( couleur() == BLEU)
+   {
+    tournerSurLui(80);
+     delay(1000);
+     deplacement(40,true);
+     delay(1000);
+     tournerSurLui(-95);
+     delay(1000);
+     deplacement(230,true);
+
+
+   }
+   else if(couleur() == ROSE)
+   {
+     deplacement(230,true);
+   }
+   else if (couleur() == JAUNE)
+   {
+     tournerSurLui(-80);
+     delay(1000);
+     deplacement(40,true);
+     delay(1000);
+     tournerSurLui(95);
+     delay(1000);
+     deplacement(230,true);
+   }
+ }
