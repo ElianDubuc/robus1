@@ -26,7 +26,8 @@ Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_50MS, TCS3472
 #define DIAMETRE_ROBOT 18.6
 
 #define MONTER 1
-#define BAISSER 0
+#define MILIEU 2
+#define BAISSER 3
 
 #define Vmax 0.25
 #define INC 0.08
@@ -46,6 +47,7 @@ void detectionQuille();
 int capteurSonor();
 int detectquille();
 int couleur();
+void bonerAlerte(int);
 
 //---Variables du suiveur de ligne---
 //Variables des pins
@@ -130,10 +132,10 @@ void loop() {
   //capteurIR();
   //detectionQuille();
   //capteurSonor();
-  delay(1000);
+  
 
-  Serial.println(couleur());
-
+  Serial.println(detectionsifflet());
+  delay(500);
   /*switch (etat)
   {
   case 1:
@@ -542,3 +544,21 @@ int couleur()
     Serial.print("G:\t"); Serial.println(green);
     Serial.print("B:\t"); Serial.println(blue); Serial.print("\n");*/
 
+void bonerAlerte(int position)
+{
+  if(position == MONTER)
+  {
+    SERVO_SetAngle(0, 125);
+    SERVO_SetAngle(1, 75);
+  }
+  else if(position == BAISSER)
+  {
+    SERVO_SetAngle(0, 55);
+    SERVO_SetAngle(1, 150);
+  }
+  else if(position == MILIEU)
+  {
+    SERVO_SetAngle(0, 83);
+    SERVO_SetAngle(1, 120);
+  }
+}
