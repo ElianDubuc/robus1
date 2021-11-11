@@ -50,7 +50,7 @@ int detectquille();
 int couleur();
 void bonerAlerte(int);
 void bing_shilling(int);
-void colormatter();
+void colormatter(int);
 
 //---Variables du suiveur de ligne---
 //Variables des pins
@@ -76,6 +76,7 @@ int nbMesure = 0;
 //Variable loop
 int etat = 1;
 bool haveTurned = false;
+int couleurASeRendre = 0;
 //-----------------------------------
 
 enum etats{
@@ -91,8 +92,7 @@ enum etats{
 
 
 void setup() {
-  // put your setup code here, to run once: :')
-  //Serial.begin(9600);
+
   pinMode(trigPin, OUTPUT);
   pinMode(echoPin, INPUT);
   //Serial.begin(9600);
@@ -112,41 +112,10 @@ void setup() {
   SERVO_Enable(1);
   SERVO_SetAngle(0,  125);//Position haute pour les deux moteurs
   SERVO_SetAngle(1, 75);
-
-  //brasBallon(MONTER);
-  
   etat = 3;
 }
 
 void loop() {
-
-  //detectquilleIR();
-  //Serial.print(" Capteur 1: ");
-  //Serial.println(capteur1);
-  // put your main code here, to run repeatedly:
-  //Serial.print(ENCODER_Read(0));
-  //Serial.println(detectionsifflet());
-  //if(detectionsifflet())
-  //  Serial.println("Sifflet");
-  //Serial.print(digitalRead(lineS));
-  //Serial.print(digitalRead(ls));
-  //Serial.print(digitalRead(cs));
-  //Serial.println(digitalRead(rs));
-  /*if(ROBUS_IsBumper(3))
-  {
-    suiveurLignes(true);
-  }
-  else
-  {
-    suiveurLignes(false);
-  }*/
-  //capteurIR();
-  //detectionQuille();
-  //capteurSonor();
-  
-
-  //detectionsifflet();
-  //delay(500);
 Serial.print("Mode: ");Serial.println(etat);
   switch (etat)
   {
@@ -173,7 +142,8 @@ Serial.print("Mode: ");Serial.println(etat);
     break;
   case 4:
     Serial.println(couleur());
-    if(couleur() != 0)
+    couleurASeRendre = couleur();
+    if(couleurASeRendre != 0)
     {
       bing_shilling(8);
       etat = 5;
@@ -183,7 +153,8 @@ Serial.print("Mode: ");Serial.println(etat);
     //Va chercher la balle et enlignement corridor
     deplacement(5, false);
     bonerAlerte(BAISSER);
-    etat = 6; 
+    delay(100);
+    colormatter(couleurASeRendre);
     break;
   case 6:
     //Avance jusqu'au fond du corridor
@@ -564,6 +535,7 @@ int capteurSonor()
 
 int couleur()
 {
+  delay(50);
   MOTOR_SetSpeed(RIGHT, 0);
   MOTOR_SetSpeed(LEFT, 0);
   
@@ -611,8 +583,8 @@ void bonerAlerte(int position)
   }
   else if(position == BAISSER)
   {
-    SERVO_SetAngle(0, 55);
-    SERVO_SetAngle(1, 150);
+    SERVO_SetAngle(0, 65);
+    SERVO_SetAngle(1, 180);
   }
   else if(position == MILIEU)
   {
@@ -688,32 +660,39 @@ void bing_shilling(int bing)
   }
 }
 
- void colormatter()
+ void colormatter(int couleurCaptee)
  {
-   if( couleur() == BLEU)
+   delay(50);
+   Serial.println("dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd");
+   Serial.println(couleurCaptee);
+   if(couleurCaptee == BLEU)
    {
-    tournerSurLui(80);
-     delay(1000);
-     deplacement(40,true);
-     delay(1000);
-     tournerSurLui(-95);
-     delay(1000);
-     deplacement(230,true);
-
-
-   }
-   else if(couleur() == ROSE)
-   {
-     deplacement(230,true);
-   }
-   else if (couleur() == JAUNE)
-   {
-     tournerSurLui(-80);
+     Serial.println("bleu");
+    tournerSurLui(-80);
      delay(1000);
      deplacement(40,true);
      delay(1000);
      tournerSurLui(95);
      delay(1000);
      deplacement(230,true);
+
+
    }
+   else if(couleurCaptee == ROSE)
+   {
+     Serial.println("rose");
+     deplacement(230,true);
+   }
+   else if (couleurCaptee == JAUNE)
+   {
+    Serial.println("Jaune");
+     tournerSurLui(80);
+     delay(1000);
+     deplacement(40,true);
+     delay(1000);
+     tournerSurLui(-95);
+     delay(1000);
+     deplacement(230,true);
+   }
+   Serial.println("Fuck");
  }
