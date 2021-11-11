@@ -628,8 +628,8 @@ void bing_shilling(int bing)
   {
     if(i%2 == 0)
     {
-      MOTOR_SetSpeed(LEFT, -bingShillingSpeed/bing*(bing-i));
-      MOTOR_SetSpeed(RIGHT, -bingShillingSpeed/bing*(bing-i));
+      MOTOR_SetSpeed(LEFT, -bingShillingSpeed);
+      MOTOR_SetSpeed(RIGHT, -bingShillingSpeed);
       m1 = m2 = true;
       while(m1 || m2)
       {
@@ -655,8 +655,8 @@ void bing_shilling(int bing)
     }
     else
     {
-      MOTOR_SetSpeed(LEFT, bingShillingSpeed/bing*(bing-i));
-      MOTOR_SetSpeed(RIGHT, bingShillingSpeed/bing*(bing-i));
+      MOTOR_SetSpeed(LEFT, bingShillingSpeed);
+      MOTOR_SetSpeed(RIGHT, bingShillingSpeed);
       m1 = m2 = true;
       while(m1 || m2)
       {
