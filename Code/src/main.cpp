@@ -166,7 +166,9 @@ Serial.print("Mode: ");Serial.println(etat);
     digitalWrite(ledRouge, LOW);
     digitalWrite(ledJaune, LOW);
     digitalWrite(ledBleu, LOW);
-    suiveurLignes(true);
+    haveTurned = false;
+    etat = 1;
+    //suiveurLignes(true);
     break;
   default:
     break;
@@ -686,7 +688,7 @@ void bing_shilling(int bing)
      tournerSurLui(170);
      deplacement(215,true);
      delay(1000);
-     tournerSurLui(-17);
+     //tournerSurLui(-25);
    }
    else if(couleurCaptee == ROSE)
    {
@@ -699,7 +701,7 @@ void bing_shilling(int bing)
      tournerSurLui(170);
      deplacement(215,true);
      delay(1000);
-     tournerSurLui(-17);
+     tournerSurLui(-10);
      deplacement(30, false);
    }
    else if (couleurCaptee == JAUNE)
@@ -718,6 +720,7 @@ void bing_shilling(int bing)
      tournerSurLui(171);
      deplacement(220,true);
      delay(1000);
+     tourner(20);
    }
    Serial.println("Fuck");
  }
