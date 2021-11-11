@@ -183,6 +183,7 @@ Serial.print("Mode: ");Serial.println(etat);
     //Va chercher la balle et enlignement corridor
     deplacement(5, false);
     bonerAlerte(BAISSER);
+    colormatter();
     etat = 6; 
     break;
   case 6:
