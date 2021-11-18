@@ -4,8 +4,3 @@
     constantes (define) dans le fichier "fonction.h".
 */
 #include "fonction.h"
-
-void deplacement()
-{
-    
-}
