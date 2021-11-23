@@ -14,5 +14,4 @@
 //Déclaration des constantes
 
 //Déclaration des fonctions
-void afficherNbJoueur(int);
-void afficherNbCarte(int);
+void afficherNb(int, int);
