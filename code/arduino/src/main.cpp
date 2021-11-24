@@ -7,33 +7,21 @@
 
 void setup() 
 {
-  pinMode(32, OUTPUT);
-  /*pinMode(24, OUTPUT);
-  pinMode(26, OUTPUT);
-  pinMode(37, OUTPUT);
-  pinMode(30, OUTPUT);
-  pinMode(32, OUTPUT);
-  pinMode(34, OUTPUT);*/
-  //digitalWrite(32, LOW);
-  /*digitalWrite(24, LOW);
-  digitalWrite(26, LOW);
-  digitalWrite(37, LOW);
-  digitalWrite(30, LOW);
-  digitalWrite(32, LOW);
-  digitalWrite(34, LOW);*/
-
   BoardInit();
+  initpins();
   
 }
 
-void loop() 
+void loop()
 {
-  
-  digitalWrite(32, HIGH);
-  //digitalWrite(24, HIGH);
-  //digitalWrite(26, HIGH);
-  //digitalWrite(37, HIGH);
-  //digitalWrite(30, HIGH);
-  //digitalWrite(32, HIGH);
-  //digitalWrite(34, HIGH);
+  int i;
+  for(i=0; i<10; i++)
+    {
+      for(int x=0; x<50; x++)
+      {
+        afficherNb(9-i, DISPLAY0);
+        afficherNb(i, DISPLAY1);
+      }
+    }
+    i=0;
 }

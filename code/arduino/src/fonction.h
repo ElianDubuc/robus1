@@ -12,6 +12,10 @@
 
 
 //Déclaration des constantes
+#define DISPLAY0 10
+#define DISPLAY1 11
+
 
 //Déclaration des fonctions
 void afficherNb(int, int);
+void initpins();
