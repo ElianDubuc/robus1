@@ -14,8 +14,19 @@
 //Déclaration des constantes
 #define DISPLAY0 10
 #define DISPLAY1 11
+#define BUTTON0  3
+#define MAX_JOUEURS 6
+#define MAX_CARTES 8
+#define MAX_JEU 2
+
+
+//Variables globales
+//int displayselect;
 
 
 //Déclaration des fonctions
 void afficherNb(int, int);
+void blink(int, int, int, int, int*);
+void changedisp();
+void changevalue();
 void initpins();
