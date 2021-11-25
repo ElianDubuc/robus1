@@ -128,7 +128,7 @@ void afficherNb(int nb, int display)
     }
 
     digitalWrite(display, HIGH);
-    delay(10);
+    delay(5);
     
     digitalWrite(display, LOW);
     digitalWrite(38,LOW);
@@ -149,20 +149,25 @@ void blink(int nb1, int nb2, int nb3, int dispblk, int *compteur)
         case 0:
             if(*compteur<20)
                 afficherNb(nb1, DISPLAY0);
-            afficherNb(nb2, DISPLAY1);            
+            afficherNb(nb2, DISPLAY1);
+            afficherNb(nb3, DISPLAY2);     
             break;
         case 1:
-            afficherNb(nb1,DISPLAY0);
+            afficherNb(nb1, DISPLAY0);
             if(*compteur<20)
-                afficherNb(nb2, DISPLAY1);   
+                afficherNb(nb2, DISPLAY1);  
+            afficherNb(nb3, DISPLAY2); 
             break;
         case 2:
-            afficherNb(nb1,DISPLAY0);
-            afficherNb(nb2, DISPLAY1);   
+            afficherNb(nb1, DISPLAY0);
+            afficherNb(nb2, DISPLAY1); 
+            if(*compteur<20)
+                afficherNb(nb3, DISPLAY2);
             break;
         case 3:
-            afficherNb(nb1,DISPLAY0);
-            afficherNb(nb2, DISPLAY1);   
+            afficherNb(nb1, DISPLAY0);
+            afficherNb(nb2, DISPLAY1);  
+            afficherNb(nb3, DISPLAY2); 
             break;
     }
     if(*compteur>50)

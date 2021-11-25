@@ -69,7 +69,7 @@ void changevalue()
     break;
 
   case 2:
-    if(selectionjeu<=MAX_JEU)
+    if(selectionjeu<MAX_JEU)
       selectionjeu++;
     else
       selectionjeu = 0;
