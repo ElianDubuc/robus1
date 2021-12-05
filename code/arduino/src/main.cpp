@@ -27,6 +27,21 @@ void loop()
   {
     blink(nombrecartes, nombrejoueurs, selectionjeu, displayselect, &compteur);        
   }
+
+  /*
+  switch ()
+  {
+  //Jeu, nb carte, nb joueur
+  case 0:
+    
+    break;
+  case 1:
+    while(startGame() == false);
+    break;
+  default:
+    break;
+  }
+  */
 }
 
 void changedisp()
@@ -50,7 +65,7 @@ void changedisp()
 
 void changevalue()
 {
-  Serial.print("Changemet de valeur: ");
+  Serial.print("Changement de valeur: ");
   Serial.println(displayselect);
   switch (displayselect)
   {

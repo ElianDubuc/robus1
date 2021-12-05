@@ -15,6 +15,7 @@
 #define DISPLAY0 10
 #define DISPLAY1 11
 #define DISPLAY2 13
+#define PLAY 8
 #define BUTTON0  3
 #define MAX_JOUEURS 6
 #define MAX_CARTES 8
@@ -27,3 +28,4 @@ void blink(int, int, int, int, int*);
 void changedisp();
 void changevalue();
 void initpins();
+bool startGame();

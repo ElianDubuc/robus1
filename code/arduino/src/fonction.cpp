@@ -15,6 +15,7 @@ Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_50MS, TCS3472
 void initpins()
 {
     //pinMode(BUTTON0, INPUT);
+    pinMode(8, INPUT);
     pinMode(10, OUTPUT);
     pinMode(11, OUTPUT);
     pinMode(13, INPUT);
@@ -176,4 +177,16 @@ void blink(int nb1, int nb2, int nb3, int dispblk, int *compteur)
         *compteur+=1;
 }
 
-
+//Appeler la fonction pour vérifier si le jeu peut commencer
+//
+bool startGame()
+{
+    if(digitalRead(PLAY) == HIGH)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
