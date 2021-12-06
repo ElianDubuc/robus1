@@ -179,14 +179,14 @@ void blink(int nb1, int nb2, int nb3, int dispblk, int *compteur)
 
 //Appeler la fonction pour vérifier si le jeu peut commencer
 //
-bool startGame()
+int startGame()
 {
     if(digitalRead(PLAY) == HIGH)
     {
-        return true;
+        return 1;
     }
     else
     {
-        return false;
+        return 0;
     }
 }

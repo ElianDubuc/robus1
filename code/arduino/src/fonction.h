@@ -28,4 +28,4 @@ void blink(int, int, int, int, int*);
 void changedisp();
 void changevalue();
 void initpins();
-bool startGame();
+int startGame();
