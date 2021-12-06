@@ -223,7 +223,7 @@ void distribution(byte nombreJoueur, int nombreCarte) //Fonction pour donner au 
     AX_BuzzerOFF();
     delay(50);
   }
-  while(digitalRead(lineS) == 0)
+  while(digitalRead(lineS) == 0) //Arrêt du robot au point de départ à la fin de la distribution
   {
     suiveurLignes();
   }
@@ -261,7 +261,7 @@ void donnerCarte(byte noJoueur, int nbCartes) //Fonction pour donner un nombre d
       }
     }
   }
-  while(digitalRead(lineS) == 0)
+  while(digitalRead(lineS) == 0) //Arrêt du robot au point de départ à la fin de la distribution
   {
     suiveurLignes();
   }
@@ -281,7 +281,6 @@ char * readRFID() //Fonction pour récupérer le code de la pastille du joueur
     char rc = Serial1.read();
     receivedChars[i] = rc;
     delay(10);
-    //Serial.print(receivedChars[i]); Serial.println(rc);
     i++;
   }
   receivedChars[14] = '\0';
