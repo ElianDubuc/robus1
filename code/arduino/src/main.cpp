@@ -9,7 +9,7 @@
 int displayselect=3;
 int nombrejoueurs=1;
 int nombrecartes=1;
-int selectionjeu=1;
+int mode=10;
 int G_state=0;
 
 void setup() 
@@ -30,7 +30,7 @@ void loop()
     int compteur;
     for(int x=0; x<200; x++)
     {
-      blink(nombrecartes, nombrejoueurs, 10, displayselect, &compteur);        
+      blink(nombrecartes, nombrejoueurs, mode, displayselect, &compteur);        
     }
     if(startGame())
       G_state = 1;
@@ -42,7 +42,7 @@ void loop()
   case 2:   //affichage distribution secondaire
     for(int x=0; x<200; x++)
     {
-      blink(nombrecartes, nombrejoueurs, 11, displayselect, &compteur);        
+      blink(nombrecartes, nombrejoueurs, mode, displayselect, &compteur);        
     }
     if(startGame())
       G_state = 1;
@@ -63,8 +63,8 @@ void changedisp()
   else
     displayselect--;
 
-  //Serial.print("Display selected: ");
-  //Serial.println(displayselect);
+  Serial.print("Display selected: ");
+  Serial.println(displayselect);
   
   return;
 }
@@ -90,10 +90,10 @@ void changevalue()
     break;
 
   case 2:
-    if(selectionjeu<MAX_JEU)
-      selectionjeu++;
+    if(mode == 10)
+      mode = 11;
     else
-      selectionjeu = 0;
+      mode = 10;
     break;
 
   default:

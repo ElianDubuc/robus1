@@ -30,9 +30,6 @@
 #define rs 47
 #define lineS 48
 
-String playerID[6] = {"0414E50DCF37","041514AF2288","041514A9B31F","0E008E46E026","0E008E9E736D","0F027D734043"}; //Liste des codes des différentes puces
-int joueursTotals[6][6] = {{1},{2,5},{1,3,5},{1,3,4,6},{1,2,3,4,5},{1,2,3,4,5,6}}; //Liste des joueurs actifs dépendant du nombre de joueur sur le jeu
-
 //Déclaration des fonctions
 void afficherNb(int, int);
 void blink(int, int, int, int, int*);
