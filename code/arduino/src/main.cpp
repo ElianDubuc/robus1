@@ -26,24 +26,29 @@ void loop()
   switch (G_state)
   {
   //Jeu, nb carte, nb joueur
-  case 0:
+  case 0:   //affichage parametres jeu
     int compteur;
     for(int x=0; x<200; x++)
     {
-      blink(nombrecartes, nombrejoueurs, selectionjeu, displayselect, &compteur);        
+      blink(nombrecartes, nombrejoueurs, 10, displayselect, &compteur);        
     }
     if(startGame())
       G_state = 1;
     break;
-  case 1:
-    for(int y=1; y<100; y++)
+  case 1:   //distibution initale
+    distribution(nombrejoueurs, nombrecartes);
+    G_state = 2;
+    break;
+  case 2:   //affichage distribution secondaire
+    for(int x=0; x<200; x++)
     {
-      afficherNb(8, DISPLAY0);
-      afficherNb(8, DISPLAY1);
-      afficherNb(8, DISPLAY2);
+      blink(nombrecartes, nombrejoueurs, 11, displayselect, &compteur);        
     }
     if(startGame())
-      G_state = 0;
+      G_state = 1;
+    break;
+  case 3:
+
     break;
   default:
     break;

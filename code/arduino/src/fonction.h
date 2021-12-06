@@ -40,3 +40,7 @@ void changedisp();
 void changevalue();
 void initpins();
 int startGame();
+void distribution(byte, int);
+void donnerCarte(byte, int);
+char * readRFID();
+void suiveurLignes();

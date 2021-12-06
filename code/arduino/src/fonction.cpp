@@ -124,6 +124,24 @@ void afficherNb(int nb, int display)
         digitalWrite(43,HIGH);
         digitalWrite(44,HIGH);
         break;
+    case 10:    //afficher la lettre 'd'
+        digitalWrite(38,LOW);
+        digitalWrite(39,HIGH);
+        digitalWrite(40,HIGH);
+        digitalWrite(41,HIGH);
+        digitalWrite(42,HIGH);
+        digitalWrite(43,LOW);
+        digitalWrite(44,HIGH);
+        break;
+    case 11:    //afficher la lettre 'p'
+        digitalWrite(38,HIGH);
+        digitalWrite(39,HIGH);
+        digitalWrite(40,LOW);
+        digitalWrite(41,LOW);
+        digitalWrite(42,HIGH);
+        digitalWrite(43,HIGH);
+        digitalWrite(44,HIGH);
+        break;
     default:
         break;
     }
@@ -178,7 +196,6 @@ void blink(int nb1, int nb2, int nb3, int dispblk, int *compteur)
 }
 
 //Appeler la fonction pour vérifier si le jeu peut commencer
-//
 int startGame()
 {
     if(digitalRead(PLAY) == HIGH)
