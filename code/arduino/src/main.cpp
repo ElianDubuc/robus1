@@ -23,40 +23,37 @@ void setup()
 
 void loop()
 {
-  int compteur = 0;
-  while(1)
+  switch (G_state)
   {
-    switch (G_state)
+  //Jeu, nb carte, nb joueur
+  case 0:   //affichage parametres jeu
+    int compteur;
+    for(int x=0; x<200; x++)
     {
-    //Jeu, nb carte, nb joueur
-    case 0:   //affichage parametres jeu
-      for(int x=0; x<200; x++)
-      {
-        blink(nombrecartes, nombrejoueurs, 10, displayselect, &compteur);        
-      }
-      if(startGame())
-        G_state = 1;
-      break;
-    case 1:   //distibution initale
-      distribution(nombrejoueurs, nombrecartes);
-      G_state = 2;
-      break;
-    case 2:   //affichage distribution secondaire
-      for(int x=0; x<200; x++)
-      {
-        blink(nombrecartes, nombrejoueurs, 11, displayselect, &compteur);        
-      }
-      if(startGame())
-        G_state = 1;
-      break;
-    case 3:
-
-      break;
-    default:
-      break;
+      blink(nombrecartes, nombrejoueurs, 10, displayselect, &compteur);        
     }
+    if(startGame())
+      G_state = 1;
+    break;
+  case 1:   //distibution initale
+    distribution(nombrejoueurs, nombrecartes);
+    G_state = 2;
+    break;
+  case 2:   //affichage distribution secondaire
+    for(int x=0; x<200; x++)
+    {
+      blink(nombrecartes, nombrejoueurs, 11, displayselect, &compteur);        
+    }
+    if(startGame())
+      G_state = 1;
+    break;
+  case 3:
+
+    break;
+  default:
+    break;
   }
-  return;
+
 }
 
 void changedisp()

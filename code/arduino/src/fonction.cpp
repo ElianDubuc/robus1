@@ -6,10 +6,10 @@
 //Include
 #include "fonction.h"
 
+
 //Variables globales
 Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_50MS, TCS34725_GAIN_4X);
-String playerID[6] = {"0414E50DCF37","041514AF2288","041514A9B31F","0E008E46E026","0E008E9E736D","0F027D734043"}; //Liste des codes des différentes puces
-int joueursTotals[6][6] = {{1},{2,5},{1,3,5},{1,3,4,6},{1,2,3,4,5},{1,2,3,4,5,6}}; //Liste des joueurs actifs dépendant du nombre de joueur sur le jeu
+
 
 //Fonctions
 void initpins()
