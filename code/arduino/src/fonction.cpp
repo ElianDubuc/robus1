@@ -177,13 +177,13 @@ void blink(int nb1, int nb2, int nb3, int dispblk, int *compteur)
                 afficherNb(nb2, DISPLAY1);  
             afficherNb(nb3, DISPLAY2); 
             break;
-        case 2:
+        /*case 2:
             afficherNb(nb1, DISPLAY0);
             afficherNb(nb2, DISPLAY1); 
             if(*compteur<20)
                 afficherNb(nb3, DISPLAY2);
-            break;
-        case 3:
+            break;*/
+        case 2:
             afficherNb(nb1, DISPLAY0);
             afficherNb(nb2, DISPLAY1);  
             afficherNb(nb3, DISPLAY2); 
