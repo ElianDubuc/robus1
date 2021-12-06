@@ -12,7 +12,7 @@
 #include <SoftwareSerial.h>
 #include <string.h>
 
-//Déclaration des constantes
+//Déclaration des constantes pour l'affichage
 #define DISPLAY0 10
 #define DISPLAY1 11
 #define DISPLAY2 13
@@ -30,6 +30,12 @@
 #define rs 47
 #define lineS 48
 
+//Constantes pour la distibution de cartes
+#define FIRST 29
+#define SECOND 28
+#define THIRD 26
+#define FOURTH 27
+
 //Déclaration des fonctions
 void afficherNb(int, int);
 void blink(int, int, int, int, int*);
@@ -41,3 +47,4 @@ void distribution(byte, int);
 void donnerCarte(byte, int);
 char * readRFID();
 void suiveurLignes();
+void distributecards();

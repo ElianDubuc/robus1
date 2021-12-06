@@ -36,8 +36,11 @@ void loop()
       G_state = 1;
     break;
   case 1:   //distibution initale
-    distribution(nombrejoueurs, nombrecartes);
-    G_state = 2;
+    if(mode == 10)
+      distribution(nombrejoueurs, nombrecartes);
+    else if(mode == 11)
+      donnerCarte(nombrejoueurs, nombrecartes);
+    G_state = 0;
     break;
   case 2:   //affichage distribution secondaire
     for(int x=0; x<200; x++)
@@ -95,6 +98,7 @@ void changevalue()
     else
       mode = 10;
     break;
+
 
   default:
     break;

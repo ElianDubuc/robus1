@@ -219,7 +219,11 @@ void distribution(byte nombreJoueur, int nombreCarte) //Fonction pour donner au 
     }
     MOTOR_SetSpeed(LEFT, 0); //Arrêt des moteurs
     MOTOR_SetSpeed(RIGHT, 0);
+    
     AX_BuzzerON(); //Témoin sonore lors de la détection de la puce
+    delay(50);
+    AX_BuzzerOFF();
+    
     char * test = readRFID(); //Lecture de la puce
     String str(test); //Formattage en char
     for (byte i2 = 0; i2 < 6; i2++) //Identifier le joueur et prise de décision sur la distribution des cartes
@@ -232,13 +236,12 @@ void distribution(byte nombreJoueur, int nombreCarte) //Fonction pour donner au 
           {
             Serial.print("Joueur "); Serial.println(i2 + 1);
             Serial.println("Donner une carte");
+            distributecards();
           }
         }
         
       }
     }
-    delay(50);
-    AX_BuzzerOFF();
     delay(50);
   }
   while(digitalRead(lineS) == 0) //Arrêt du robot au point de départ à la fin de la distribution
@@ -273,6 +276,7 @@ void donnerCarte(byte noJoueur, int nbCartes) //Fonction pour donner un nombre d
           MOTOR_SetSpeed(LEFT, 0);
           MOTOR_SetSpeed(RIGHT, 0);
           Serial.println("Donner une carte");
+          distributecards();
           delay(20);
         }
         taskComplete = true;
@@ -365,4 +369,42 @@ void suiveurLignes()
     }
     MOTOR_SetSpeed(RIGHT, Vright);
     MOTOR_SetSpeed(LEFT, VLeft);
+}
+
+void distributecards()
+{
+  digitalRead(FIRST);
+  digitalRead(SECOND);
+  digitalRead(THIRD);
+  digitalRead(FOURTH);
+
+Serial.println(digitalRead(FIRST));
+Serial.println( digitalRead(SECOND));
+Serial.println(digitalRead(THIRD));
+Serial.println(digitalRead(FOURTH));
+
+pinMode(A8, OUTPUT);
+digitalWrite(A8, HIGH);
+SERVO_SetAngle(1,7);
+
+SERVO_SetAngle(1,90);
+delay(1000);
+SERVO_SetAngle(1,100);
+delay(100);
+digitalWrite(A8, LOW);
+delay(1000);
+SERVO_SetAngle(1,70);
+delay(500);
+digitalWrite(A8, HIGH);
+delay(500);
+SERVO_SetAngle(1,60);
+
+  SERVO_SetAngle(0, 50);
+  delay(1500);
+  SERVO_SetAngle(0, 125);
+  delay(1500);
+  SERVO_SetAngle(0, 50);
+
+delay(1000);
+return;
 }
