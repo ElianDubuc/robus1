@@ -15,6 +15,7 @@ int G_state=0;
 void setup() 
 {
   BoardInit();
+  Serial1.begin(9600); //Serial1 : RFID
   initpins();
   attachInterrupt(digitalPinToInterrupt(3), changedisp, RISING);
   attachInterrupt(digitalPinToInterrupt(2), changevalue, RISING);
