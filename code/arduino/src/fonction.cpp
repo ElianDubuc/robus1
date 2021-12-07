@@ -256,17 +256,22 @@ void distribution(byte nombreJoueur, int nombreCarte) //Fonction pour donner au 
 void donnerCarte(byte noJoueur, int nbCartes) //Fonction pour donner un nombre de carte x au joueur y
 {
   bool taskComplete = false;
+  Serial.println(taskComplete);
   while(taskComplete == false)
   {
     while (!(Serial1.available() > 0))
     {
       suiveurLignes();
     }
+    Serial.println("Checkpoint 0");
     AX_BuzzerON();
-    char * code = readRFID(); //Lecture de la puce
-    String str(code); //Formattage en string
     delay(50);
     AX_BuzzerOFF();
+    char * test = readRFID(); //Lecture de la puce
+    Serial.println("Checkpoint 1");
+    String str(test); //Formattage en string
+    Serial.println("Checkpoint 2");
+    Serial.println("Checkpoint 3");
     for (byte i = 0; i < 6; i++)
     {
       if(playerID[i] == str && noJoueur == (i + 1))
@@ -298,18 +303,22 @@ char * readRFID() //Fonction pour récupérer le code de la pastille du joueur
   char * chipCode; //Pointeur de la table du code du joueur
   chipCode = new char[13]; //Instantiation de la table
   byte i = 0;
+  Serial.println("Checkpoint 5");
   while(Serial1.available() > 0) //Copie/conversion des données dans la table
   {
+    Serial.println(Serial1.available());
     char rc = Serial1.read();
     receivedChars[i] = rc;
     delay(10);
     i++;
   }
+  Serial.println("Checkpoint 6");
   receivedChars[14] = '\0';
   for (byte i = 0; i < 12; i++) //Transfert de la table et élimination des caractères non désirables
   {
     chipCode[i] = receivedChars[i + 1];
   }
+  Serial.println("Checkpoint 7");
   //Serial.print("receivedChar "); Serial.println(receivedChars);
   //Serial.print("chipCode "); Serial.println(chipCode);
   chipCode[12] = '\0'; //Ajout du caractères pour la fin de la table

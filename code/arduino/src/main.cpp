@@ -23,40 +23,39 @@ void setup()
 
 void loop()
 {
-  switch (G_state)
+  while(1)
   {
-  //Jeu, nb carte, nb joueur
-  case 0:   //affichage parametres jeu
-    int compteur;
-    for(int x=0; x<200; x++)
+    switch (G_state)
     {
-      blink(nombrecartes, nombrejoueurs, mode, displayselect, &compteur);        
+    //Jeu, nb carte, nb joueur
+    case 0:   //affichage parametres jeu
+      int compteur;
+      for(int x=0; x<200; x++)
+      {
+        blink(nombrecartes, nombrejoueurs, mode, displayselect, &compteur);        
+      }
+      if(startGame())
+        G_state = 1;
+      //Serial.println("Checkpoint 0");
+      break;
+    case 1:   //distibution initale
+      Serial.println(mode);
+      if(mode == 10)
+      {
+        distribution(nombrejoueurs, nombrecartes);
+        //Serial.println("Checkpoint 1");
+      }
+      else if(mode == 11)
+      {
+        donnerCarte(nombrejoueurs, nombrecartes);
+        //Serial.println("Checkpoint 2");
+      }
+      G_state = 0;
+      break;
+    default:
+      break;
     }
-    if(startGame())
-      G_state = 1;
-    break;
-  case 1:   //distibution initale
-    if(mode == 10)
-      distribution(nombrejoueurs, nombrecartes);
-    else if(mode == 11)
-      donnerCarte(nombrejoueurs, nombrecartes);
-    G_state = 0;
-    break;
-  case 2:   //affichage distribution secondaire
-    for(int x=0; x<200; x++)
-    {
-      blink(nombrecartes, nombrejoueurs, mode, displayselect, &compteur);        
-    }
-    if(startGame())
-      G_state = 1;
-    break;
-  case 3:
-
-    break;
-  default:
-    break;
   }
-
 }
 
 void changedisp()
