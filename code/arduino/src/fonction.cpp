@@ -267,9 +267,9 @@ void donnerCarte(byte noJoueur, int nbCartes) //Fonction pour donner un nombre d
     AX_BuzzerON();
     delay(50);
     AX_BuzzerOFF();
-    char * test = readRFID(); //Lecture de la puce
+    char * code = readRFID(); //Lecture de la puce
     Serial.println("Checkpoint 1");
-    String str(test); //Formattage en string
+    String str(code); //Formattage en 
     Serial.println("Checkpoint 2");
     Serial.println("Checkpoint 3");
     for (byte i = 0; i < 6; i++)
